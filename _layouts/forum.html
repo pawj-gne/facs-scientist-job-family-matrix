@@ -1275,17 +1275,17 @@
     function renderBody(text) {
       if (!text) return '';
 
-      // Escape HTML first
-      let html = escapeHtml(text);
-
-      // Convert mentions
-      html = html.replace(/@(\w+)/g, '<span class="mention">@$1</span>');
-
-      // Extract blockquote text before processing (for highlight links)
+      // Extract blockquote text BEFORE escaping (for highlight links)
       const blockquoteMatch = text.match(/^> (.+(?:\n> .+)*)/m);
       const quotedText = blockquoteMatch
         ? blockquoteMatch[0].replace(/^> /gm, '').trim()
         : '';
+
+      // Escape HTML
+      let html = escapeHtml(text);
+
+      // Convert mentions
+      html = html.replace(/@(\w+)/g, '<span class="mention">@$1</span>');
 
       // Convert document references with highlight parameter
       html = html.replace(/\[\[([^\]]+)\]\]/g, (match, path) => {
@@ -1295,7 +1295,7 @@
             ? `?highlight=${encodeURIComponent(quotedText.substring(0, 200))}`
             : '';
           return `<div class="doc-reference">
-            <div class="doc-reference-header">📄 Referenced: <a href="${path}${highlightParam}" class="doc-ref-link" data-highlight="${escapeHtml(quotedText)}">${doc.name}</a></div>
+            <div class="doc-reference-header">📄 Referenced: <a href="/${path}${highlightParam}" class="doc-ref-link">${doc.name}</a></div>
             ${quotedText ? '<div class="doc-reference-hint">Click to view highlighted passage</div>' : ''}
           </div>`;
         }
