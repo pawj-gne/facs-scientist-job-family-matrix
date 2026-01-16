@@ -1,3 +1,8 @@
+---
+layout: default
+title: Promotion Philosophy
+---
+
 # Promotion Philosophy & Design Principles
 
 ## The Core Tension

@@ -1,3 +1,8 @@
+---
+layout: default
+title: Project Examples
+---
+
 # Immunoplex Lab: Promotion Project Examples
 
 **Purpose:** Concrete examples of promotable work at each Scientist tier for the Immunoplex (Luminex/bead-based multiplex) platform.

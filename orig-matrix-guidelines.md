@@ -1,3 +1,8 @@
+---
+layout: default
+title: Original Guidelines
+---
+
 # Scientist Job Family Matrix
 
 **gRED Research**

@@ -1,3 +1,8 @@
+---
+layout: default
+title: Promotion Criteria
+---
+
 # Flow Cytometry Core Management Consultant
 
 This summary provides a detailed breakdown of the FACS - Scientist Promotion Criteria document, structured to highlight scientific advancement and operational excellence within the flow cytometry core environment.

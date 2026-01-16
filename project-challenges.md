@@ -1,3 +1,8 @@
+---
+layout: default
+title: Project Challenges
+---
+
 # FACS Scientist Promotion Framework
 ## Project Challenges
 

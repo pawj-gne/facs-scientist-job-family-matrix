@@ -3,7 +3,7 @@ layout: default
 title: Home
 ---
 
-# FACS Scientist Job Family Matrix
+# Welcome
 
 A career progression framework for Flow Cytometry Core Facility Scientists that prioritizes **scientific contribution over tenure**.
 
@@ -16,24 +16,6 @@ A career progression framework for Flow Cytometry Core Facility Scientists that 
 | **Sci 2** (SE4/5) | The Operator | The Instrument | High uptime, clean data, routine mastery |
 | **Sci 3** (SE6) | The Consultant | The Experiment | Researcher success, experimental design |
 | **Sci 4** (SE7) | The Investigator | The Core/Field | Innovation, R&D, publications |
-
----
-
-## Documents
-
-### Core Framework
-- [Handover Document](handover-doc.md) — Core philosophy and tier definitions
-- [Promotion Criteria Summary](facs-scientist-promotion-criteria-summary.md) — Quick reference for promotion requirements
-- [Promotion Philosophy](promotion-philosophy.md) — The "why" behind the framework
-
-### Strategy & Planning
-- [Project Strategies](project-strategies.md) — How to frame work as impact
-- [Promotion Project Examples](promotion-project-examples.md) — Concrete examples for each tier
-- [Matrix Planning](matrix-planning-doc.md) — Working document for matrix development
-
-### Reference
-- [Original Matrix Guidelines](orig-matrix-guidelines.md) — Source material we're building from
-- [Project Challenges](project-challenges.md) — Known obstacles and how to address them
 
 ---
 
@@ -56,9 +38,6 @@ A career progression framework for Flow Cytometry Core Facility Scientists that 
 
 ---
 
-## Have Feedback?
+## Getting Started
 
-- **[Comments & Suggestions](CONTRIBUTING.md)** — Share your thoughts on this framework
-- **[Start a Discussion](https://github.com/pawj-gne/facs-scientist-job-family-matrix/discussions)** — Ask questions or discuss ideas
-- **[Suggest an Edit](https://github.com/pawj-gne/facs-scientist-job-family-matrix/issues/new)** — Propose specific changes
-- **[View on GitHub](https://github.com/pawj-gne/facs-scientist-job-family-matrix)** — See all files and history
+Use the **sidebar** to navigate through the framework documents. Start with the [Handover Document](handover-doc) for the core philosophy, then explore the strategies and examples.

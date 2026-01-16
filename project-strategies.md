@@ -1,3 +1,8 @@
+---
+layout: default
+title: Project Strategies
+---
+
 # FACS Scientist Promotion Framework
 ## Strategic Approaches
 

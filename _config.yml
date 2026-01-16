@@ -1,17 +1,8 @@
 title: FACS Scientist Job Family Matrix
 description: Career progression framework for Flow Cytometry Core Facility Scientists
-remote_theme: pages-themes/cayman@v0.2.0
 
 # Build settings
 markdown: kramdown
-plugins:
-  - jekyll-remote-theme
-
-# Navigation
-header_pages:
-  - handover-doc.md
-  - project-strategies.md
-  - facs-scientist-promotion-criteria-summary.md
 
 # Exclude files from the site
 exclude:
@@ -19,3 +10,4 @@ exclude:
   - .claude/
   - project-journal.md
   - meeting-notes.md
+  - README.md

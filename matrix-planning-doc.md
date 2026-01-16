@@ -1,3 +1,8 @@
+---
+layout: default
+title: Matrix Planning
+---
+
 # Project: Flow Cytometry Core Job Family Matrix Revamp
 
 **Current Version:** v1.6 (January 15, 2026)
