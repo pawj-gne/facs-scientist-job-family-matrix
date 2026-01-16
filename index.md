@@ -58,6 +58,7 @@ A career progression framework for Flow Cytometry Core Facility Scientists that 
 
 ## Have Feedback?
 
-**[Comments & Suggestions →](CONTRIBUTING.md)**
-
-We welcome your input on this framework.
+- **[Comments & Suggestions](CONTRIBUTING.md)** — Share your thoughts on this framework
+- **[Start a Discussion](https://github.com/pawj-gne/facs-scientist-job-family-matrix/discussions)** — Ask questions or discuss ideas
+- **[Suggest an Edit](https://github.com/pawj-gne/facs-scientist-job-family-matrix/issues/new)** — Propose specific changes
+- **[View on GitHub](https://github.com/pawj-gne/facs-scientist-job-family-matrix)** — See all files and history
