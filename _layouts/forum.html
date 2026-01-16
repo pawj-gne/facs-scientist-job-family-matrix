@@ -1285,32 +1285,41 @@
     function renderBody(text) {
       if (!text) return '';
 
-      // Extract blockquote text BEFORE escaping (for highlight links)
+      // Extract blockquote text BEFORE any processing (for highlight links)
       const blockquoteMatch = text.match(/^> (.+(?:\n> .+)*)/m);
       const quotedText = blockquoteMatch
         ? blockquoteMatch[0].replace(/^> /gm, '').trim()
         : '';
 
-      // Escape HTML
-      let html = escapeHtml(text);
-
-      // Convert mentions
-      html = html.replace(/@(\w+)/g, '<span class="mention">@$1</span>');
-
-      // Convert document references with highlight parameter
-      html = html.replace(/\[\[([^\]]+)\]\]/g, (match, path) => {
+      // Find and temporarily replace document references BEFORE escaping
+      // This preserves them through the HTML escape process
+      const docRefs = [];
+      let processedText = text.replace(/\[\[([^\]]+)\]\]/g, (match, path) => {
         const doc = DOCUMENTS.find(d => d.path === path);
         if (doc) {
+          const placeholder = '___DOC_REF_' + docRefs.length + '___';
           const highlightParam = quotedText
-            ? `?highlight=${encodeURIComponent(quotedText.substring(0, 200))}`
+            ? '?highlight=' + encodeURIComponent(quotedText.substring(0, 200))
             : '';
-          return `<div class="doc-reference">
-            <div class="doc-reference-header">📄 Referenced: <a href="/${path}/${highlightParam}" class="doc-ref-link">${doc.name}</a></div>
-            ${quotedText ? '<div class="doc-reference-hint">Click to view highlighted passage</div>' : ''}
-          </div>`;
+          docRefs.push('<div class="doc-reference">' +
+            '<div class="doc-reference-header">📄 Referenced: <a href="/' + path + '/' + highlightParam + '">' + doc.name + '</a></div>' +
+            (quotedText ? '<div class="doc-reference-hint">Click to view highlighted passage</div>' : '') +
+          '</div>');
+          return placeholder;
         }
         return match;
       });
+
+      // Escape HTML
+      let html = escapeHtml(processedText);
+
+      // Restore document references
+      docRefs.forEach((ref, i) => {
+        html = html.replace('___DOC_REF_' + i + '___', ref);
+      });
+
+      // Convert mentions
+      html = html.replace(/@(\w+)/g, '<span class="mention">@$1</span>');
 
       // Convert line breaks
       html = html.replace(/\n/g, '<br>');
