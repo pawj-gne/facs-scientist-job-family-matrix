@@ -278,6 +278,8 @@
     const PAGE_PATH = '{{ page.url }}'.replace(/^\/|\/$/g, '').replace('.html', '');
     const PAGE_TITLE = '{{ page.title | default: "this document" }}';
     const FORUM_URL = '{{ "/forum" | relative_url }}';
+    console.log('[Default Debug] PAGE_PATH:', PAGE_PATH);
+    console.log('[Default Debug] Raw page.url:', '{{ page.url }}');
 
     const toolbar = document.getElementById('selection-toolbar');
     const contentArea = document.querySelector('.content');

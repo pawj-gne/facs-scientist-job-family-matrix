@@ -802,15 +802,21 @@
 
     function checkForPrefill() {
       const prefillData = sessionStorage.getItem('forumPrefill');
+      console.log('[Forum Debug] prefillData from sessionStorage:', prefillData);
       if (!prefillData) return;
 
       try {
         const data = JSON.parse(prefillData);
+        console.log('[Forum Debug] Parsed data:', data);
+        console.log('[Forum Debug] sourceDocument:', data.sourceDocument);
+        console.log('[Forum Debug] DOCUMENTS paths:', DOCUMENTS.map(d => d.path));
         sessionStorage.removeItem('forumPrefill');
 
         // Find matching document for proper reference syntax
         const doc = DOCUMENTS.find(d => d.path === data.sourceDocument);
+        console.log('[Forum Debug] Found doc:', doc);
         const docRef = doc ? `[[${doc.path}]]` : '';
+        console.log('[Forum Debug] docRef:', docRef);
 
         // Build the pre-filled body with blockquote
         const quotedText = data.selectedText
