@@ -1303,7 +1303,7 @@
           const highlightParam = quotedText
             ? '?highlight=' + encodeURIComponent(quotedText.substring(0, 200))
             : '';
-          const docUrl = BASE_URL + '/' + path + '/' + highlightParam;
+          const docUrl = BASE_URL + '/' + path + highlightParam;
           console.log('Generated doc URL:', docUrl);
           docRefs.push('<div class="doc-reference">' +
             '<div class="doc-reference-header">📄 Referenced: <a href="' + docUrl + '">' + doc.name + '</a></div>' +
