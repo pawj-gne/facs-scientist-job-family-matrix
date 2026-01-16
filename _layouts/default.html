@@ -225,6 +225,32 @@
       0%, 100% { box-shadow: 0 0 0 2px #ffc107; }
       50% { box-shadow: 0 0 0 4px #ffc107, 0 0 12px rgba(255, 193, 7, 0.5); }
     }
+
+    /* Forum notification badge */
+    .notification-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 18px;
+      height: 18px;
+      padding: 0 5px;
+      margin-left: 6px;
+      font-size: 11px;
+      font-weight: 600;
+      color: white;
+      background: #e53935;
+      border-radius: 9px;
+      vertical-align: middle;
+    }
+
+    .notification-badge.pulse {
+      animation: badge-pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes badge-pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
   </style>
 </head>
 <body>
@@ -417,6 +443,83 @@
       sessionStorage.setItem('forumPrefill', JSON.stringify(prefillData));
       window.location.href = FORUM_URL;
     }
+  })();
+
+  // Forum notification badge system
+  (function() {
+    const REPO_OWNER = 'pawj-gne';
+    const REPO_NAME = 'facs-scientist-job-family-matrix';
+    const DISCUSSION_LABEL = 'discussion';
+
+    const badge = document.getElementById('forum-badge');
+    if (!badge) return;
+
+    // Get stored GitHub token and user
+    const token = localStorage.getItem('github_token');
+    if (!token) return; // No badge if user hasn't logged in
+
+    // Get current user to create user-specific storage key
+    async function initBadge() {
+      try {
+        const userResponse = await fetch('https://api.github.com/user', {
+          headers: { 'Authorization': 'token ' + token }
+        });
+
+        if (!userResponse.ok) return; // Invalid token
+
+        const user = await userResponse.json();
+        const storageKey = 'forum_seen_' + user.login;
+
+        // Get seen data for this user
+        const seenData = JSON.parse(localStorage.getItem(storageKey) || '{}');
+        // seenData format: { lastVisit: timestamp, posts: { issueNumber: { seen: timestamp, commentCount: number } } }
+
+        // Fetch current posts
+        const postsResponse = await fetch(
+          'https://api.github.com/repos/' + REPO_OWNER + '/' + REPO_NAME + '/issues?labels=' + DISCUSSION_LABEL + '&state=open&per_page=100',
+          { headers: { 'Authorization': 'token ' + token } }
+        );
+
+        if (!postsResponse.ok) return;
+
+        const posts = await postsResponse.json();
+        let unreadCount = 0;
+
+        for (const post of posts) {
+          const issueNum = post.number;
+          const postCreated = new Date(post.created_at).getTime();
+          const postUpdated = new Date(post.updated_at).getTime();
+
+          if (!seenData.posts || !seenData.posts[issueNum]) {
+            // Never seen this post
+            unreadCount++;
+          } else {
+            const seenInfo = seenData.posts[issueNum];
+            // Check if there are new comments since last seen
+            if (post.comments > (seenInfo.commentCount || 0)) {
+              unreadCount += (post.comments - (seenInfo.commentCount || 0));
+            }
+            // Check if post was updated after we last saw it (edited)
+            if (postUpdated > seenInfo.seen) {
+              unreadCount++;
+            }
+          }
+        }
+
+        // Update badge
+        if (unreadCount > 0) {
+          badge.textContent = unreadCount > 99 ? '99+' : unreadCount;
+          badge.style.display = 'inline-flex';
+          badge.classList.add('pulse');
+        } else {
+          badge.style.display = 'none';
+        }
+      } catch (error) {
+        console.log('Forum badge error:', error);
+      }
+    }
+
+    initBadge();
   })();
   </script>
 </body>

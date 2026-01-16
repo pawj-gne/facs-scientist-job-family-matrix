@@ -983,6 +983,11 @@
       document.querySelectorAll('.post-item').forEach(item => {
         item.addEventListener('click', () => showPost(item.dataset.id));
       });
+
+      // Mark all posts as seen when user views the forum
+      if (currentUser) {
+        markAllPostsAsSeen();
+      }
     }
 
     async function showPost(id) {
@@ -1040,6 +1045,11 @@
 
           // Store current issue number for comment submission
           submitComment.dataset.issueNumber = issueNumber;
+
+          // Mark this post as seen with current comment count
+          if (currentUser) {
+            markPostAsSeen(issueNumber, comments.length);
+          }
         }
       } catch (error) {
         console.error('Error loading comments:', error);
@@ -1337,6 +1347,46 @@
       }
 
       return 'just now';
+    }
+
+    // Forum notification tracking - mark posts as seen
+    function getSeenStorageKey() {
+      return currentUser ? 'forum_seen_' + currentUser.login : null;
+    }
+
+    function markAllPostsAsSeen() {
+      const storageKey = getSeenStorageKey();
+      if (!storageKey || allPosts.length === 0) return;
+
+      const seenData = JSON.parse(localStorage.getItem(storageKey) || '{}');
+      if (!seenData.posts) seenData.posts = {};
+
+      const now = Date.now();
+      allPosts.forEach(post => {
+        // Mark post as seen with current comment count
+        seenData.posts[post.number] = {
+          seen: now,
+          commentCount: post.comments
+        };
+      });
+
+      seenData.lastVisit = now;
+      localStorage.setItem(storageKey, JSON.stringify(seenData));
+    }
+
+    function markPostAsSeen(issueNumber, commentCount) {
+      const storageKey = getSeenStorageKey();
+      if (!storageKey) return;
+
+      const seenData = JSON.parse(localStorage.getItem(storageKey) || '{}');
+      if (!seenData.posts) seenData.posts = {};
+
+      seenData.posts[issueNumber] = {
+        seen: Date.now(),
+        commentCount: commentCount
+      };
+
+      localStorage.setItem(storageKey, JSON.stringify(seenData));
     }
   </script>
 </body>
