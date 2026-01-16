@@ -19,7 +19,8 @@
       "mcp__github__push_files",
       "Bash(gh api:*)",
       "Bash(gh run list:*)",
-      "Bash(gh repo edit:*)"
+      "Bash(gh repo edit:*)",
+      "Bash(gh label create:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

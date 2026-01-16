@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ page.title }} | {{ site.title }}</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      background: #fafafa;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #155799, #159957);
+      color: white;
+      padding: 1.5rem 2rem;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+
+    .header p {
+      margin: 0.5rem 0 0 0;
+      opacity: 0.9;
+      font-size: 0.95rem;
+    }
+
+    .header-nav {
+      margin-top: 0.75rem;
+    }
+
+    .header-nav a {
+      color: white;
+      text-decoration: none;
+      margin-right: 1.5rem;
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    .header-nav a:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* Auth Section */
+    .auth-section {
+      background: white;
+      border: 1px solid #e1e4e8;
+      border-radius: 6px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .auth-section.logged-out {
+      justify-content: center;
+      text-align: center;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .user-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+    }
+
+    .user-name {
+      font-weight: 600;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 0.9rem;
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+    }
+
+    .btn-primary {
+      background: #2ea44f;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #22863a;
+    }
+
+    .btn-secondary {
+      background: #fafbfc;
+      border: 1px solid #e1e4e8;
+      color: #24292e;
+    }
+
+    .btn-secondary:hover {
+      background: #f3f4f6;
+    }
+
+    .btn-github {
+      background: #24292e;
+      color: white;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-github:hover {
+      background: #000;
+    }
+
+    .btn-github svg {
+      width: 20px;
+      height: 20px;
+      fill: white;
+    }
+
+    /* New Post Form */
+    .new-post-section {
+      background: white;
+      border: 1px solid #e1e4e8;
+      border-radius: 6px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      display: none;
+    }
+
+    .new-post-section.visible {
+      display: block;
+    }
+
+    .new-post-section h2 {
+      margin: 0 0 1rem 0;
+      font-size: 1.1rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      font-size: 0.9rem;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid #e1e4e8;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-family: inherit;
+    }
+
+    .form-group textarea {
+      min-height: 120px;
+      resize: vertical;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #0366d6;
+      box-shadow: 0 0 0 3px rgba(3, 102, 214, 0.1);
+    }
+
+    .form-hint {
+      font-size: 0.8rem;
+      color: #6a737d;
+      margin-top: 0.25rem;
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: flex-end;
+    }
+
+    /* Posts List */
+    .posts-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .posts-header h2 {
+      margin: 0;
+      font-size: 1.25rem;
+    }
+
+    .post-filters {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .filter-btn {
+      padding: 0.25rem 0.75rem;
+      border: 1px solid #e1e4e8;
+      background: white;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    .filter-btn.active {
+      background: #0366d6;
+      color: white;
+      border-color: #0366d6;
+    }
+
+    .posts-list {
+      background: white;
+      border: 1px solid #e1e4e8;
+      border-radius: 6px;
+    }
+
+    .post-item {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid #e1e4e8;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .post-item:last-child {
+      border-bottom: none;
+    }
+
+    .post-item:hover {
+      background: #f6f8fa;
+    }
+
+    .post-title {
+      font-weight: 600;
+      color: #0366d6;
+      margin: 0 0 0.25rem 0;
+      font-size: 1rem;
+    }
+
+    .post-meta {
+      font-size: 0.85rem;
+      color: #6a737d;
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .post-author {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .post-author img {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+    }
+
+    .post-label {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .label-question { background: #d73a4a20; color: #d73a4a; }
+    .label-suggestion { background: #0366d620; color: #0366d6; }
+    .label-feedback { background: #28a74520; color: #28a745; }
+    .label-general { background: #6a737d20; color: #6a737d; }
+
+    .post-preview {
+      font-size: 0.9rem;
+      color: #586069;
+      margin-top: 0.5rem;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .post-stats {
+      display: flex;
+      gap: 0.75rem;
+      font-size: 0.85rem;
+      color: #6a737d;
+    }
+
+    /* Single Post View */
+    .post-view {
+      display: none;
+    }
+
+    .post-view.visible {
+      display: block;
+    }
+
+    .post-view-header {
+      margin-bottom: 1rem;
+    }
+
+    .back-link {
+      color: #0366d6;
+      text-decoration: none;
+      font-size: 0.9rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+
+    .post-full {
+      background: white;
+      border: 1px solid #e1e4e8;
+      border-radius: 6px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .post-full-title {
+      font-size: 1.5rem;
+      margin: 0 0 0.75rem 0;
+    }
+
+    .post-full-meta {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid #e1e4e8;
+      margin-bottom: 1rem;
+    }
+
+    .post-full-body {
+      line-height: 1.7;
+    }
+
+    .post-full-body p {
+      margin: 0 0 1rem 0;
+    }
+
+    .post-full-body blockquote {
+      border-left: 4px solid #dfe2e5;
+      margin: 1rem 0;
+      padding: 0.5rem 1rem;
+      color: #6a737d;
+      background: #f6f8fa;
+    }
+
+    .doc-reference {
+      background: #f1f8ff;
+      border: 1px solid #c8e1ff;
+      border-radius: 4px;
+      padding: 0.75rem 1rem;
+      margin: 1rem 0;
+    }
+
+    .doc-reference-header {
+      font-size: 0.8rem;
+      color: #0366d6;
+      margin-bottom: 0.25rem;
+    }
+
+    .doc-reference-content {
+      font-size: 0.9rem;
+      font-style: italic;
+      color: #24292e;
+    }
+
+    .mention {
+      color: #0366d6;
+      background: #f1f8ff;
+      padding: 0.1rem 0.3rem;
+      border-radius: 3px;
+    }
+
+    /* Comments */
+    .comments-section h3 {
+      font-size: 1.1rem;
+      margin: 0 0 1rem 0;
+    }
+
+    .comment {
+      background: white;
+      border: 1px solid #e1e4e8;
+      border-radius: 6px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .comment-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .comment-avatar {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+    }
+
+    .comment-author {
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .comment-date {
+      font-size: 0.8rem;
+      color: #6a737d;
+    }
+
+    .comment-body {
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .add-comment {
+      background: white;
+      border: 1px solid #e1e4e8;
+      border-radius: 6px;
+      padding: 1rem 1.25rem;
+      margin-top: 1rem;
+    }
+
+    .add-comment textarea {
+      width: 100%;
+      min-height: 80px;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid #e1e4e8;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-family: inherit;
+      resize: vertical;
+      margin-bottom: 0.75rem;
+    }
+
+    /* Loading State */
+    .loading {
+      text-align: center;
+      padding: 3rem;
+      color: #6a737d;
+    }
+
+    .loading-spinner {
+      width: 32px;
+      height: 32px;
+      border: 3px solid #e1e4e8;
+      border-top-color: #0366d6;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: #6a737d;
+    }
+
+    .empty-state h3 {
+      margin: 0 0 0.5rem 0;
+      color: #24292e;
+    }
+
+    /* Autocomplete */
+    .autocomplete-container {
+      position: relative;
+    }
+
+    .autocomplete-dropdown {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border: 1px solid #e1e4e8;
+      border-radius: 6px;
+      box-shadow: 0 8px 24px rgba(149, 157, 165, 0.2);
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 100;
+      display: none;
+    }
+
+    .autocomplete-dropdown.visible {
+      display: block;
+    }
+
+    .autocomplete-item {
+      padding: 0.5rem 0.75rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .autocomplete-item:hover {
+      background: #f6f8fa;
+    }
+
+    .autocomplete-item img {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+    }
+
+    .autocomplete-doc {
+      font-size: 0.9rem;
+    }
+
+    .autocomplete-doc .doc-path {
+      color: #6a737d;
+      font-size: 0.8rem;
+    }
+
+    /* Toolbar */
+    .editor-toolbar {
+      display: flex;
+      gap: 0.25rem;
+      margin-bottom: 0.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid #e1e4e8;
+    }
+
+    .toolbar-btn {
+      padding: 0.35rem 0.5rem;
+      border: 1px solid #e1e4e8;
+      background: white;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.85rem;
+      color: #586069;
+    }
+
+    .toolbar-btn:hover {
+      background: #f6f8fa;
+      color: #24292e;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+
+      .auth-section {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+      }
+
+      .posts-header {
+        flex-direction: column;
+        gap: 0.75rem;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <h1>{{ site.title }}</h1>
+    <p>{{ site.description }}</p>
+    <nav class="header-nav">
+      <a href="{{ '/' | relative_url }}">← Back to Docs</a>
+      <a href="{{ '/forum' | relative_url }}">Discussion Forum</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <!-- Auth Section -->
+    <div id="auth-section" class="auth-section logged-out">
+      <p>Sign in with GitHub to participate in discussions</p>
+      <button id="login-btn" class="btn btn-github">
+        <svg viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        Sign in with GitHub
+      </button>
+    </div>
+
+    <div id="user-section" class="auth-section" style="display: none;">
+      <div class="user-info">
+        <img id="user-avatar" class="user-avatar" src="" alt="">
+        <span>Signed in as <strong id="user-name"></strong></span>
+      </div>
+      <div>
+        <button id="new-post-btn" class="btn btn-primary">New Discussion</button>
+        <button id="logout-btn" class="btn btn-secondary">Sign out</button>
+      </div>
+    </div>
+
+    <!-- New Post Form -->
+    <div id="new-post-form" class="new-post-section">
+      <h2>Start a New Discussion</h2>
+      <form id="post-form">
+        <div class="form-group">
+          <label for="post-title">Title</label>
+          <input type="text" id="post-title" placeholder="What would you like to discuss?" required>
+        </div>
+        <div class="form-group">
+          <label for="post-category">Category</label>
+          <select id="post-category">
+            <option value="general">General Discussion</option>
+            <option value="question">Question</option>
+            <option value="suggestion">Suggestion</option>
+            <option value="feedback">Feedback on Document</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="post-body">Message</label>
+          <div class="editor-toolbar">
+            <button type="button" class="toolbar-btn" data-action="mention" title="Mention someone">@mention</button>
+            <button type="button" class="toolbar-btn" data-action="doc" title="Reference a document">📄 doc</button>
+            <button type="button" class="toolbar-btn" data-action="quote" title="Add a quote">❝ quote</button>
+          </div>
+          <div class="autocomplete-container">
+            <textarea id="post-body" placeholder="Share your thoughts... Use @ to mention teammates, [[doc]] to reference documents" required></textarea>
+            <div id="autocomplete-dropdown" class="autocomplete-dropdown"></div>
+          </div>
+          <div class="form-hint">Supports Markdown. Use @username to mention, [[document-name]] to reference docs.</div>
+        </div>
+        <div class="form-actions">
+          <button type="button" id="cancel-post" class="btn btn-secondary">Cancel</button>
+          <button type="submit" class="btn btn-primary">Post Discussion</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Posts List View -->
+    <div id="posts-view">
+      <div class="posts-header">
+        <h2>Discussions</h2>
+        <div class="post-filters">
+          <button class="filter-btn active" data-filter="all">All</button>
+          <button class="filter-btn" data-filter="question">Questions</button>
+          <button class="filter-btn" data-filter="suggestion">Suggestions</button>
+          <button class="filter-btn" data-filter="feedback">Feedback</button>
+        </div>
+      </div>
+      <div id="posts-list" class="posts-list">
+        <div class="loading">
+          <div class="loading-spinner"></div>
+          Loading discussions...
+        </div>
+      </div>
+    </div>
+
+    <!-- Single Post View -->
+    <div id="post-detail" class="post-view">
+      <a href="#" class="back-link" id="back-to-list">← Back to all discussions</a>
+      <div id="post-content" class="post-full"></div>
+      <div class="comments-section">
+        <h3 id="comments-count">Replies</h3>
+        <div id="comments-list"></div>
+        <div id="add-comment-section" class="add-comment" style="display: none;">
+          <div class="editor-toolbar">
+            <button type="button" class="toolbar-btn" data-action="mention" title="Mention someone">@mention</button>
+            <button type="button" class="toolbar-btn" data-action="doc" title="Reference a document">📄 doc</button>
+            <button type="button" class="toolbar-btn" data-action="quote" title="Add a quote">❝ quote</button>
+          </div>
+          <textarea id="comment-body" placeholder="Write a reply..."></textarea>
+          <button id="submit-comment" class="btn btn-primary">Reply</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Configuration
+    const REPO_OWNER = 'pawj-gne';
+    const REPO_NAME = 'facs-scientist-job-family-matrix';
+    const DISCUSSION_LABEL = 'discussion';
+    const CLIENT_ID = 'YOUR_GITHUB_OAUTH_CLIENT_ID'; // You'll need to create this
+
+    // Documents list for autocomplete
+    const DOCUMENTS = [
+      { name: 'Handover Document', path: 'handover-doc' },
+      { name: 'Promotion Criteria', path: 'facs-scientist-promotion-criteria-summary' },
+      { name: 'Promotion Philosophy', path: 'promotion-philosophy' },
+      { name: 'Project Strategies', path: 'project-strategies' },
+      { name: 'Project Examples', path: 'promotion-project-examples' },
+      { name: 'Matrix Planning', path: 'matrix-planning-doc' },
+      { name: 'Original Guidelines', path: 'orig-matrix-guidelines' },
+      { name: 'Project Challenges', path: 'project-challenges' }
+    ];
+
+    // Category to label mapping
+    const CATEGORY_LABELS = {
+      'general': { label: 'general', class: 'label-general', display: 'General' },
+      'question': { label: 'question', class: 'label-question', display: 'Question' },
+      'suggestion': { label: 'suggestion', class: 'label-suggestion', display: 'Suggestion' },
+      'feedback': { label: 'feedback', class: 'label-feedback', display: 'Feedback' }
+    };
+
+    // State
+    let currentUser = null;
+    let accessToken = localStorage.getItem('github_token');
+    let allPosts = [];
+    let currentFilter = 'all';
+    let contributors = [];
+
+    // DOM Elements
+    const authSection = document.getElementById('auth-section');
+    const userSection = document.getElementById('user-section');
+    const loginBtn = document.getElementById('login-btn');
+    const logoutBtn = document.getElementById('logout-btn');
+    const userAvatar = document.getElementById('user-avatar');
+    const userName = document.getElementById('user-name');
+    const newPostBtn = document.getElementById('new-post-btn');
+    const newPostForm = document.getElementById('new-post-form');
+    const postForm = document.getElementById('post-form');
+    const cancelPost = document.getElementById('cancel-post');
+    const postsView = document.getElementById('posts-view');
+    const postsList = document.getElementById('posts-list');
+    const postDetail = document.getElementById('post-detail');
+    const backToList = document.getElementById('back-to-list');
+    const postContent = document.getElementById('post-content');
+    const commentsList = document.getElementById('comments-list');
+    const commentsCount = document.getElementById('comments-count');
+    const addCommentSection = document.getElementById('add-comment-section');
+    const commentBody = document.getElementById('comment-body');
+    const submitComment = document.getElementById('submit-comment');
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    const autocompleteDropdown = document.getElementById('autocomplete-dropdown');
+
+    // Initialize
+    init();
+
+    async function init() {
+      // Check for OAuth callback
+      const urlParams = new URLSearchParams(window.location.search);
+      const code = urlParams.get('code');
+      if (code) {
+        await handleOAuthCallback(code);
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+
+      // Check if user is logged in
+      if (accessToken) {
+        await loadUser();
+      }
+
+      // Load posts
+      await loadPosts();
+
+      // Load contributors for mentions
+      await loadContributors();
+
+      // Setup event listeners
+      setupEventListeners();
+    }
+
+    function setupEventListeners() {
+      loginBtn.addEventListener('click', login);
+      logoutBtn.addEventListener('click', logout);
+      newPostBtn.addEventListener('click', () => toggleNewPostForm(true));
+      cancelPost.addEventListener('click', () => toggleNewPostForm(false));
+      postForm.addEventListener('submit', handlePostSubmit);
+      backToList.addEventListener('click', (e) => {
+        e.preventDefault();
+        showPostsList();
+      });
+      submitComment.addEventListener('click', handleCommentSubmit);
+
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          filterBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentFilter = btn.dataset.filter;
+          renderPosts();
+        });
+      });
+
+      // Autocomplete for textareas
+      document.querySelectorAll('textarea').forEach(textarea => {
+        textarea.addEventListener('input', handleAutocomplete);
+        textarea.addEventListener('keydown', handleAutocompleteKeydown);
+      });
+
+      // Toolbar buttons
+      document.querySelectorAll('.toolbar-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const action = e.target.dataset.action;
+          const textarea = e.target.closest('.form-group, .add-comment').querySelector('textarea');
+          handleToolbarAction(action, textarea);
+        });
+      });
+    }
+
+    // Auth functions
+    function login() {
+      // For GitHub Pages, we'll use a simple token-based auth
+      // In production, you'd use OAuth with a backend
+      const token = prompt('Enter your GitHub Personal Access Token:\n\nCreate one at: https://github.com/settings/tokens\nRequired scopes: public_repo');
+      if (token) {
+        accessToken = token;
+        localStorage.setItem('github_token', token);
+        loadUser();
+      }
+    }
+
+    function logout() {
+      accessToken = null;
+      currentUser = null;
+      localStorage.removeItem('github_token');
+      authSection.style.display = 'flex';
+      userSection.style.display = 'none';
+      addCommentSection.style.display = 'none';
+      toggleNewPostForm(false);
+    }
+
+    async function loadUser() {
+      try {
+        const response = await fetch('https://api.github.com/user', {
+          headers: { 'Authorization': `token ${accessToken}` }
+        });
+        if (response.ok) {
+          currentUser = await response.json();
+          userAvatar.src = currentUser.avatar_url;
+          userName.textContent = currentUser.login;
+          authSection.style.display = 'none';
+          userSection.style.display = 'flex';
+          addCommentSection.style.display = 'block';
+        } else {
+          logout();
+        }
+      } catch (error) {
+        console.error('Error loading user:', error);
+        logout();
+      }
+    }
+
+    async function handleOAuthCallback(code) {
+      // This would normally go through a backend
+      // For GitHub Pages, we'll use token-based auth instead
+    }
+
+    // Posts functions
+    async function loadPosts() {
+      try {
+        const response = await fetch(
+          `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues?labels=${DISCUSSION_LABEL}&state=open&sort=created&direction=desc`,
+          accessToken ? { headers: { 'Authorization': `token ${accessToken}` } } : {}
+        );
+        if (response.ok) {
+          allPosts = await response.json();
+          renderPosts();
+        }
+      } catch (error) {
+        console.error('Error loading posts:', error);
+        postsList.innerHTML = '<div class="empty-state"><h3>Error loading discussions</h3><p>Please try again later.</p></div>';
+      }
+    }
+
+    function renderPosts() {
+      const filtered = currentFilter === 'all'
+        ? allPosts
+        : allPosts.filter(post => post.labels.some(l => l.name === currentFilter));
+
+      if (filtered.length === 0) {
+        postsList.innerHTML = `
+          <div class="empty-state">
+            <h3>No discussions yet</h3>
+            <p>${currentUser ? 'Start the first discussion!' : 'Sign in to start a discussion.'}</p>
+          </div>
+        `;
+        return;
+      }
+
+      postsList.innerHTML = filtered.map(post => {
+        const category = post.labels.find(l => Object.keys(CATEGORY_LABELS).includes(l.name));
+        const categoryInfo = category ? CATEGORY_LABELS[category.name] : CATEGORY_LABELS.general;
+        const preview = post.body ? post.body.substring(0, 150) + (post.body.length > 150 ? '...' : '') : '';
+
+        return `
+          <div class="post-item" data-id="${post.number}">
+            <h3 class="post-title">${escapeHtml(post.title)}</h3>
+            <div class="post-meta">
+              <span class="post-author">
+                <img src="${post.user.avatar_url}" alt="${post.user.login}">
+                ${post.user.login}
+              </span>
+              <span class="post-label ${categoryInfo.class}">${categoryInfo.display}</span>
+              <span>${timeAgo(new Date(post.created_at))}</span>
+              <span class="post-stats">💬 ${post.comments}</span>
+            </div>
+            ${preview ? `<p class="post-preview">${escapeHtml(preview)}</p>` : ''}
+          </div>
+        `;
+      }).join('');
+
+      // Add click handlers
+      document.querySelectorAll('.post-item').forEach(item => {
+        item.addEventListener('click', () => showPost(item.dataset.id));
+      });
+    }
+
+    async function showPost(id) {
+      postsView.style.display = 'none';
+      postDetail.classList.add('visible');
+      newPostForm.classList.remove('visible');
+
+      const post = allPosts.find(p => p.number == id);
+      if (!post) return;
+
+      const category = post.labels.find(l => Object.keys(CATEGORY_LABELS).includes(l.name));
+      const categoryInfo = category ? CATEGORY_LABELS[category.name] : CATEGORY_LABELS.general;
+
+      postContent.innerHTML = `
+        <h1 class="post-full-title">${escapeHtml(post.title)}</h1>
+        <div class="post-full-meta">
+          <span class="post-author">
+            <img src="${post.user.avatar_url}" alt="${post.user.login}" style="width:24px;height:24px;border-radius:50%;">
+            <strong>${post.user.login}</strong>
+          </span>
+          <span class="post-label ${categoryInfo.class}">${categoryInfo.display}</span>
+          <span>${new Date(post.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+        </div>
+        <div class="post-full-body">${renderBody(post.body)}</div>
+      `;
+
+      // Load comments
+      await loadComments(id);
+    }
+
+    async function loadComments(issueNumber) {
+      try {
+        const response = await fetch(
+          `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues/${issueNumber}/comments`,
+          accessToken ? { headers: { 'Authorization': `token ${accessToken}` } } : {}
+        );
+        if (response.ok) {
+          const comments = await response.json();
+          commentsCount.textContent = `Replies (${comments.length})`;
+
+          if (comments.length === 0) {
+            commentsList.innerHTML = '<p style="color:#6a737d;font-size:0.9rem;">No replies yet. Be the first to respond!</p>';
+          } else {
+            commentsList.innerHTML = comments.map(comment => `
+              <div class="comment">
+                <div class="comment-header">
+                  <img src="${comment.user.avatar_url}" class="comment-avatar" alt="${comment.user.login}">
+                  <span class="comment-author">${comment.user.login}</span>
+                  <span class="comment-date">${timeAgo(new Date(comment.created_at))}</span>
+                </div>
+                <div class="comment-body">${renderBody(comment.body)}</div>
+              </div>
+            `).join('');
+          }
+
+          // Store current issue number for comment submission
+          submitComment.dataset.issueNumber = issueNumber;
+        }
+      } catch (error) {
+        console.error('Error loading comments:', error);
+      }
+    }
+
+    function showPostsList() {
+      postDetail.classList.remove('visible');
+      postsView.style.display = 'block';
+    }
+
+    function toggleNewPostForm(show) {
+      newPostForm.classList.toggle('visible', show);
+      if (show) {
+        document.getElementById('post-title').focus();
+      }
+    }
+
+    async function handlePostSubmit(e) {
+      e.preventDefault();
+      if (!currentUser) return;
+
+      const title = document.getElementById('post-title').value;
+      const category = document.getElementById('post-category').value;
+      const body = document.getElementById('post-body').value;
+
+      try {
+        const response = await fetch(
+          `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues`,
+          {
+            method: 'POST',
+            headers: {
+              'Authorization': `token ${accessToken}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              title: title,
+              body: body,
+              labels: [DISCUSSION_LABEL, category]
+            })
+          }
+        );
+
+        if (response.ok) {
+          const newPost = await response.json();
+          allPosts.unshift(newPost);
+          renderPosts();
+          toggleNewPostForm(false);
+          postForm.reset();
+        } else {
+          alert('Error creating discussion. Please try again.');
+        }
+      } catch (error) {
+        console.error('Error creating post:', error);
+        alert('Error creating discussion. Please try again.');
+      }
+    }
+
+    async function handleCommentSubmit() {
+      if (!currentUser) return;
+
+      const body = commentBody.value.trim();
+      const issueNumber = submitComment.dataset.issueNumber;
+
+      if (!body || !issueNumber) return;
+
+      try {
+        const response = await fetch(
+          `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues/${issueNumber}/comments`,
+          {
+            method: 'POST',
+            headers: {
+              'Authorization': `token ${accessToken}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ body: body })
+          }
+        );
+
+        if (response.ok) {
+          commentBody.value = '';
+          await loadComments(issueNumber);
+          // Update comment count in post list
+          const post = allPosts.find(p => p.number == issueNumber);
+          if (post) post.comments++;
+        } else {
+          alert('Error posting reply. Please try again.');
+        }
+      } catch (error) {
+        console.error('Error posting comment:', error);
+        alert('Error posting reply. Please try again.');
+      }
+    }
+
+    // Contributors for mentions
+    async function loadContributors() {
+      try {
+        const response = await fetch(
+          `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contributors`,
+          accessToken ? { headers: { 'Authorization': `token ${accessToken}` } } : {}
+        );
+        if (response.ok) {
+          contributors = await response.json();
+        }
+      } catch (error) {
+        console.error('Error loading contributors:', error);
+      }
+    }
+
+    // Autocomplete
+    let autocompleteMode = null;
+    let autocompleteStart = 0;
+
+    function handleAutocomplete(e) {
+      const textarea = e.target;
+      const value = textarea.value;
+      const cursorPos = textarea.selectionStart;
+
+      // Check for @ mentions
+      const textBeforeCursor = value.substring(0, cursorPos);
+      const mentionMatch = textBeforeCursor.match(/@(\w*)$/);
+      const docMatch = textBeforeCursor.match(/\[\[([^\]]*)?$/);
+
+      if (mentionMatch) {
+        autocompleteMode = 'mention';
+        autocompleteStart = cursorPos - mentionMatch[0].length;
+        const query = mentionMatch[1].toLowerCase();
+        const matches = contributors.filter(c =>
+          c.login.toLowerCase().includes(query)
+        ).slice(0, 5);
+
+        showAutocomplete(textarea, matches.map(c => ({
+          html: `<img src="${c.avatar_url}" alt="${c.login}"><span>${c.login}</span>`,
+          value: `@${c.login} `
+        })));
+      } else if (docMatch) {
+        autocompleteMode = 'doc';
+        autocompleteStart = cursorPos - docMatch[0].length;
+        const query = (docMatch[1] || '').toLowerCase();
+        const matches = DOCUMENTS.filter(d =>
+          d.name.toLowerCase().includes(query) || d.path.toLowerCase().includes(query)
+        );
+
+        showAutocomplete(textarea, matches.map(d => ({
+          html: `<div class="autocomplete-doc"><div>${d.name}</div><div class="doc-path">${d.path}</div></div>`,
+          value: `[[${d.path}]] `
+        })));
+      } else {
+        hideAutocomplete();
+      }
+    }
+
+    function showAutocomplete(textarea, items) {
+      if (items.length === 0) {
+        hideAutocomplete();
+        return;
+      }
+
+      const dropdown = textarea.parentElement.querySelector('.autocomplete-dropdown') || autocompleteDropdown;
+      dropdown.innerHTML = items.map((item, i) => `
+        <div class="autocomplete-item" data-index="${i}" data-value="${escapeHtml(item.value)}">${item.html}</div>
+      `).join('');
+      dropdown.classList.add('visible');
+
+      dropdown.querySelectorAll('.autocomplete-item').forEach(item => {
+        item.addEventListener('click', () => {
+          insertAutocomplete(textarea, item.dataset.value);
+        });
+      });
+    }
+
+    function hideAutocomplete() {
+      document.querySelectorAll('.autocomplete-dropdown').forEach(d => d.classList.remove('visible'));
+      autocompleteMode = null;
+    }
+
+    function insertAutocomplete(textarea, value) {
+      const before = textarea.value.substring(0, autocompleteStart);
+      const after = textarea.value.substring(textarea.selectionStart);
+      textarea.value = before + value + after;
+      textarea.focus();
+      textarea.selectionStart = textarea.selectionEnd = before.length + value.length;
+      hideAutocomplete();
+    }
+
+    function handleAutocompleteKeydown(e) {
+      if (!autocompleteMode) return;
+
+      if (e.key === 'Escape') {
+        hideAutocomplete();
+        e.preventDefault();
+      } else if (e.key === 'Tab' || e.key === 'Enter') {
+        const dropdown = e.target.parentElement.querySelector('.autocomplete-dropdown.visible');
+        if (dropdown) {
+          const firstItem = dropdown.querySelector('.autocomplete-item');
+          if (firstItem) {
+            insertAutocomplete(e.target, firstItem.dataset.value);
+            e.preventDefault();
+          }
+        }
+      }
+    }
+
+    function handleToolbarAction(action, textarea) {
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const text = textarea.value;
+
+      let insertion = '';
+      switch (action) {
+        case 'mention':
+          insertion = '@';
+          break;
+        case 'doc':
+          insertion = '[[';
+          break;
+        case 'quote':
+          insertion = '> ';
+          break;
+      }
+
+      textarea.value = text.substring(0, start) + insertion + text.substring(end);
+      textarea.focus();
+      textarea.selectionStart = textarea.selectionEnd = start + insertion.length;
+
+      // Trigger autocomplete
+      if (action === 'mention' || action === 'doc') {
+        textarea.dispatchEvent(new Event('input'));
+      }
+    }
+
+    // Render helpers
+    function renderBody(text) {
+      if (!text) return '';
+
+      // Escape HTML first
+      let html = escapeHtml(text);
+
+      // Convert mentions
+      html = html.replace(/@(\w+)/g, '<span class="mention">@$1</span>');
+
+      // Convert document references
+      html = html.replace(/\[\[([^\]]+)\]\]/g, (match, path) => {
+        const doc = DOCUMENTS.find(d => d.path === path);
+        if (doc) {
+          return `<div class="doc-reference">
+            <div class="doc-reference-header">📄 Referenced: <a href="${path}">${doc.name}</a></div>
+          </div>`;
+        }
+        return match;
+      });
+
+      // Convert line breaks
+      html = html.replace(/\n/g, '<br>');
+
+      // Convert blockquotes
+      html = html.replace(/^&gt; (.+)$/gm, '<blockquote>$1</blockquote>');
+
+      return html;
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function timeAgo(date) {
+      const seconds = Math.floor((new Date() - date) / 1000);
+
+      const intervals = {
+        year: 31536000,
+        month: 2592000,
+        week: 604800,
+        day: 86400,
+        hour: 3600,
+        minute: 60
+      };
+
+      for (const [unit, secondsInUnit] of Object.entries(intervals)) {
+        const interval = Math.floor(seconds / secondsInUnit);
+        if (interval >= 1) {
+          return `${interval} ${unit}${interval === 1 ? '' : 's'} ago`;
+        }
+      }
+
+      return 'just now';
+    }
+  </script>
+</body>
+</html>
