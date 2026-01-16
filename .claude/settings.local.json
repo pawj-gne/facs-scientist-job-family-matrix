@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(if not exist \"c:\\\\Users\\\\pawj\\\\Documents\\\\Coding Projects\\\\FACS Scientist Job Family Matrix\\\\.claude\\\\commands\" mkdir \"c:\\\\Users\\\\pawj\\\\Documents\\\\Coding Projects\\\\FACS Scientist Job Family Matrix\\\\.claude\\\\commands\")",
+      "mcp__github__create_repository",
+      "Bash(git init:*)",
+      "Bash(git remote add:*)",
+      "Bash(git add:*)"
+    ]
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "github",
+    "sequential-thinking"
+  ]
+}
