@@ -211,6 +211,20 @@
       height: 16px;
       fill: currentColor;
     }
+
+    /* Highlighted text from forum reference */
+    .forum-highlight {
+      background: linear-gradient(to bottom, #fff3cd 0%, #ffeeba 100%);
+      padding: 0.1rem 0;
+      border-radius: 2px;
+      box-shadow: 0 0 0 2px #ffc107;
+      animation: highlight-pulse 2s ease-in-out;
+    }
+
+    @keyframes highlight-pulse {
+      0%, 100% { box-shadow: 0 0 0 2px #ffc107; }
+      50% { box-shadow: 0 0 0 4px #ffc107, 0 0 12px rgba(255, 193, 7, 0.5); }
+    }
   </style>
 </head>
 <body>
@@ -242,7 +256,12 @@
     const toolbar = document.getElementById('selection-toolbar');
     const contentArea = document.querySelector('.content');
 
-    if (!toolbar || !contentArea) return;
+    if (!contentArea) return;
+
+    // Check for highlight parameter from forum link
+    checkForHighlight();
+
+    if (!toolbar) return;
 
     let selectedText = '';
 
@@ -257,6 +276,90 @@
         navigateToForum();
       }
     });
+
+    function checkForHighlight() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const highlightText = urlParams.get('highlight');
+
+      if (!highlightText) return;
+
+      // Clean URL without reloading
+      window.history.replaceState({}, document.title, window.location.pathname);
+
+      // Find and highlight the text in the content
+      const searchText = decodeURIComponent(highlightText);
+      highlightTextInContent(searchText);
+    }
+
+    function highlightTextInContent(searchText) {
+      const walker = document.createTreeWalker(
+        contentArea,
+        NodeFilter.SHOW_TEXT,
+        null,
+        false
+      );
+
+      // Normalize the search text for matching
+      const normalizedSearch = searchText.replace(/\s+/g, ' ').trim().toLowerCase();
+      let foundNode = null;
+      let foundOffset = -1;
+      let accumulatedText = '';
+      let textNodes = [];
+
+      // Collect all text nodes and their content
+      while (walker.nextNode()) {
+        textNodes.push({
+          node: walker.currentNode,
+          start: accumulatedText.length,
+          text: walker.currentNode.textContent
+        });
+        accumulatedText += walker.currentNode.textContent;
+      }
+
+      // Search for the text in accumulated content
+      const normalizedContent = accumulatedText.replace(/\s+/g, ' ').toLowerCase();
+      const matchIndex = normalizedContent.indexOf(normalizedSearch.substring(0, 50));
+
+      if (matchIndex === -1) return;
+
+      // Find which text node contains the start of the match
+      let currentPos = 0;
+      for (let i = 0; i < textNodes.length; i++) {
+        const nodeText = textNodes[i].text.replace(/\s+/g, ' ').toLowerCase();
+        const nodeEnd = currentPos + nodeText.length;
+
+        if (matchIndex >= currentPos && matchIndex < nodeEnd) {
+          foundNode = textNodes[i].node;
+          foundOffset = matchIndex - currentPos;
+          break;
+        }
+        currentPos = nodeEnd;
+      }
+
+      if (!foundNode) return;
+
+      // Create a highlight span around the found text
+      try {
+        const range = document.createRange();
+        const highlightLength = Math.min(searchText.length, foundNode.textContent.length - foundOffset);
+
+        range.setStart(foundNode, Math.min(foundOffset, foundNode.textContent.length));
+        range.setEnd(foundNode, Math.min(foundOffset + highlightLength, foundNode.textContent.length));
+
+        const highlightSpan = document.createElement('mark');
+        highlightSpan.className = 'forum-highlight';
+        range.surroundContents(highlightSpan);
+
+        // Scroll to the highlighted text
+        setTimeout(function() {
+          highlightSpan.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+      } catch (e) {
+        // If highlighting fails, just scroll to approximate location
+        console.log('Could not highlight exact text, scrolling to area');
+        foundNode.parentElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    }
 
     function handleSelection() {
       setTimeout(function() {

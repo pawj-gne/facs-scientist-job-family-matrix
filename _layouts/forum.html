@@ -403,6 +403,12 @@
       color: #24292e;
     }
 
+    .doc-reference-hint {
+      font-size: 0.75rem;
+      color: #6a737d;
+      margin-top: 0.25rem;
+    }
+
     .mention {
       color: #0366d6;
       background: #f1f8ff;
@@ -1275,12 +1281,22 @@
       // Convert mentions
       html = html.replace(/@(\w+)/g, '<span class="mention">@$1</span>');
 
-      // Convert document references
+      // Extract blockquote text before processing (for highlight links)
+      const blockquoteMatch = text.match(/^> (.+(?:\n> .+)*)/m);
+      const quotedText = blockquoteMatch
+        ? blockquoteMatch[0].replace(/^> /gm, '').trim()
+        : '';
+
+      // Convert document references with highlight parameter
       html = html.replace(/\[\[([^\]]+)\]\]/g, (match, path) => {
         const doc = DOCUMENTS.find(d => d.path === path);
         if (doc) {
+          const highlightParam = quotedText
+            ? `?highlight=${encodeURIComponent(quotedText.substring(0, 200))}`
+            : '';
           return `<div class="doc-reference">
-            <div class="doc-reference-header">📄 Referenced: <a href="${path}">${doc.name}</a></div>
+            <div class="doc-reference-header">📄 Referenced: <a href="${path}${highlightParam}" class="doc-ref-link" data-highlight="${escapeHtml(quotedText)}">${doc.name}</a></div>
+            ${quotedText ? '<div class="doc-reference-hint">Click to view highlighted passage</div>' : ''}
           </div>`;
         }
         return match;
