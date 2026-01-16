@@ -181,6 +181,36 @@
         padding: 1.5rem;
       }
     }
+
+    /* Selection-to-Forum Toolbar */
+    .selection-toolbar {
+      position: absolute;
+      background: #24292e;
+      color: white;
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      cursor: pointer;
+      z-index: 1000;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      display: none;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .selection-toolbar:hover {
+      background: #000;
+    }
+
+    .selection-toolbar.visible {
+      display: flex;
+    }
+
+    .selection-toolbar svg {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+    }
   </style>
 </head>
 <body>
@@ -196,5 +226,95 @@
       {{ content }}
     </main>
   </div>
+
+  <!-- Selection-to-Forum Toolbar -->
+  <div id="selection-toolbar" class="selection-toolbar" role="button" tabindex="0" aria-label="Discuss selected text in forum">
+    <svg viewBox="0 0 16 16"><path d="M1.5 2.75a.25.25 0 01.25-.25h12.5a.25.25 0 01.25.25v8.5a.25.25 0 01-.25.25h-6.5a.75.75 0 00-.53.22L4.5 14.44v-2.19a.75.75 0 00-.75-.75h-2a.25.25 0 01-.25-.25v-8.5zM1.75 1A1.75 1.75 0 000 2.75v8.5C0 12.216.784 13 1.75 13H3v1.543a1.457 1.457 0 002.487 1.03L8.061 13h6.189A1.75 1.75 0 0016 11.25v-8.5A1.75 1.75 0 0014.25 1H1.75z"/></svg>
+    Discuss this
+  </div>
+
+  <script>
+  (function() {
+    const PAGE_PATH = '{{ page.url | remove: "/" | replace: ".html", "" }}';
+    const PAGE_TITLE = '{{ page.title | default: "this document" }}';
+    const FORUM_URL = '{{ "/forum" | relative_url }}';
+
+    const toolbar = document.getElementById('selection-toolbar');
+    const contentArea = document.querySelector('.content');
+
+    if (!toolbar || !contentArea) return;
+
+    let selectedText = '';
+
+    contentArea.addEventListener('mouseup', handleSelection);
+    contentArea.addEventListener('touchend', handleSelection);
+    document.addEventListener('mousedown', handleClickOutside);
+
+    toolbar.addEventListener('click', navigateToForum);
+    toolbar.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        navigateToForum();
+      }
+    });
+
+    function handleSelection() {
+      setTimeout(function() {
+        const selection = window.getSelection();
+        const text = selection.toString().trim();
+
+        if (text.length >= 10 && text.length <= 1000) {
+          selectedText = text;
+          positionToolbar(selection);
+          toolbar.classList.add('visible');
+        } else {
+          toolbar.classList.remove('visible');
+        }
+      }, 10);
+    }
+
+    function handleClickOutside(e) {
+      if (!toolbar.contains(e.target)) {
+        toolbar.classList.remove('visible');
+      }
+    }
+
+    function positionToolbar(selection) {
+      const range = selection.getRangeAt(0);
+      const rect = range.getBoundingClientRect();
+
+      toolbar.style.top = (window.scrollY + rect.top - toolbar.offsetHeight - 8) + 'px';
+      toolbar.style.left = (window.scrollX + rect.left + (rect.width / 2) - (toolbar.offsetWidth / 2)) + 'px';
+
+      // Keep within viewport
+      requestAnimationFrame(function() {
+        const toolbarRect = toolbar.getBoundingClientRect();
+        if (toolbarRect.left < 10) {
+          toolbar.style.left = '10px';
+        }
+        if (toolbarRect.right > window.innerWidth - 10) {
+          toolbar.style.left = (window.innerWidth - toolbar.offsetWidth - 10) + 'px';
+        }
+        if (toolbarRect.top < 10) {
+          toolbar.style.top = (window.scrollY + rect.bottom + 8) + 'px';
+        }
+      });
+    }
+
+    function navigateToForum() {
+      if (!selectedText) return;
+
+      const prefillData = {
+        selectedText: selectedText,
+        sourceDocument: PAGE_PATH,
+        sourcePage: PAGE_TITLE,
+        category: 'feedback'
+      };
+
+      sessionStorage.setItem('forumPrefill', JSON.stringify(prefillData));
+      window.location.href = FORUM_URL;
+    }
+  })();
+  </script>
 </body>
 </html>

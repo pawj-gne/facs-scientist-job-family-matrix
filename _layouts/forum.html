@@ -789,6 +789,49 @@
 
       // Setup event listeners
       setupEventListeners();
+
+      // Check for prefilled content from document selection
+      checkForPrefill();
+    }
+
+    function checkForPrefill() {
+      const prefillData = sessionStorage.getItem('forumPrefill');
+      if (!prefillData) return;
+
+      try {
+        const data = JSON.parse(prefillData);
+        sessionStorage.removeItem('forumPrefill');
+
+        // Find matching document for proper reference syntax
+        const doc = DOCUMENTS.find(d => d.path === data.sourceDocument);
+        const docRef = doc ? `[[${doc.path}]]` : '';
+
+        // Build the pre-filled body with blockquote
+        const quotedText = data.selectedText
+          .split('\n')
+          .map(line => '> ' + line)
+          .join('\n');
+
+        const bodyContent = quotedText + '\n\n' + docRef + '\n\n';
+
+        // Pre-fill the form fields
+        document.getElementById('post-title').value = 'Discussion: ' + data.sourcePage;
+        document.getElementById('post-body').value = bodyContent;
+        document.getElementById('post-category').value = data.category || 'feedback';
+
+        // Show the new post form
+        newPostForm.classList.add('visible');
+
+        // Focus on title for editing
+        if (currentUser) {
+          document.getElementById('post-title').focus();
+          document.getElementById('post-title').select();
+        }
+
+      } catch (e) {
+        console.error('Error parsing prefill data:', e);
+        sessionStorage.removeItem('forumPrefill');
+      }
     }
 
     function setupEventListeners() {
