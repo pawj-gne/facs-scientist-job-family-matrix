@@ -719,7 +719,6 @@
     const DISCUSSION_LABEL = 'discussion';
     const CLIENT_ID = 'YOUR_GITHUB_OAUTH_CLIENT_ID'; // You'll need to create this
     const BASE_URL = '{{ "/" | relative_url }}'.replace(/\/$/, ''); // Site base URL without trailing slash
-    console.log('BASE_URL:', BASE_URL);
 
     // Documents list for autocomplete
     const DOCUMENTS = [
@@ -1304,7 +1303,6 @@
             ? '?highlight=' + encodeURIComponent(quotedText.substring(0, 200))
             : '';
           const docUrl = BASE_URL + '/' + path + highlightParam;
-          console.log('Generated doc URL:', docUrl);
           docRefs.push('<div class="doc-reference">' +
             '<div class="doc-reference-header">📄 Referenced: <a href="' + docUrl + '">' + doc.name + '</a></div>' +
             (quotedText ? '<div class="doc-reference-hint">Click to view highlighted passage</div>' : '') +
