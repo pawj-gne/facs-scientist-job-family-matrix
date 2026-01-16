@@ -26,6 +26,24 @@
     </ul>
   </div>
 
+  {% if site.data.documents.size > 0 %}
+  <div class="sidebar-section">
+    <h3>Contributed</h3>
+    <ul>
+      {% for doc in site.data.documents %}
+      <li><a href="{{ '/' | append: doc.path | relative_url }}">{{ doc.title }}</a></li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  <div class="sidebar-section">
+    <h3>Tools</h3>
+    <ul>
+      <li><a href="{{ '/converter' | relative_url }}">Text to Markdown Converter</a></li>
+    </ul>
+  </div>
+
   <div class="sidebar-section">
     <h3>Community</h3>
     <ul>

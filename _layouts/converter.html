@@ -1,0 +1,1421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ page.title }} | {{ site.title }}</title>
+  <!-- Mammoth.js for .docx parsing -->
+  <script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
+  <!-- Turndown for HTML to Markdown conversion -->
+  <script src="https://cdn.jsdelivr.net/npm/turndown@7.1.2/dist/turndown.min.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      background: #fafafa;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #155799, #159957);
+      color: white;
+      padding: 1.5rem 2rem;
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+
+    .header p {
+      margin: 0.5rem 0 0 0;
+      opacity: 0.9;
+      font-size: 0.95rem;
+    }
+
+    .header-nav {
+      margin-top: 0.75rem;
+    }
+
+    .header-nav a {
+      color: white;
+      text-decoration: none;
+      margin-right: 1.5rem;
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    .header-nav a:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    .page-intro {
+      background: white;
+      border: 1px solid #e1e4e8;
+      border-radius: 6px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .page-intro h2 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1.25rem;
+    }
+
+    .page-intro p {
+      margin: 0;
+      color: #586069;
+    }
+
+    /* Input Section */
+    .input-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .input-card {
+      background: white;
+      border: 1px solid #e1e4e8;
+      border-radius: 6px;
+      padding: 1.5rem;
+    }
+
+    .input-card h3 {
+      margin: 0 0 1rem 0;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .input-card h3 .icon {
+      font-size: 1.25rem;
+    }
+
+    /* Paste Area */
+    .paste-area {
+      width: 100%;
+      min-height: 200px;
+      border: 2px dashed #e1e4e8;
+      border-radius: 6px;
+      padding: 1rem;
+      font-family: inherit;
+      font-size: 0.95rem;
+      resize: vertical;
+      transition: border-color 0.2s;
+    }
+
+    .paste-area:focus {
+      outline: none;
+      border-color: #0366d6;
+    }
+
+    .paste-area[contenteditable] {
+      overflow-y: auto;
+      background: #fafbfc;
+    }
+
+    .paste-hint {
+      font-size: 0.85rem;
+      color: #6a737d;
+      margin-top: 0.5rem;
+    }
+
+    /* File Upload */
+    .upload-zone {
+      border: 2px dashed #e1e4e8;
+      border-radius: 6px;
+      padding: 2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      min-height: 200px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .upload-zone:hover {
+      border-color: #0366d6;
+      background: #f6f8fa;
+    }
+
+    .upload-zone.dragover {
+      border-color: #0366d6;
+      background: #f1f8ff;
+    }
+
+    .upload-zone .upload-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    .upload-zone p {
+      margin: 0;
+      color: #586069;
+    }
+
+    .upload-zone .browse-link {
+      color: #0366d6;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    .file-input {
+      display: none;
+    }
+
+    .file-info {
+      display: none;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      background: #f6f8fa;
+      border-radius: 6px;
+      margin-top: 1rem;
+    }
+
+    .file-info.visible {
+      display: flex;
+    }
+
+    .file-info .file-icon {
+      font-size: 1.5rem;
+    }
+
+    .file-info .file-details {
+      flex: 1;
+    }
+
+    .file-info .file-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .file-info .file-size {
+      font-size: 0.8rem;
+      color: #6a737d;
+    }
+
+    .file-info .remove-file {
+      background: none;
+      border: none;
+      color: #cb2431;
+      cursor: pointer;
+      font-size: 1.25rem;
+      padding: 0.25rem;
+    }
+
+    /* Convert Button */
+    .convert-section {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      text-decoration: none;
+      font-size: 1rem;
+      cursor: pointer;
+      border: none;
+      font-family: inherit;
+      font-weight: 500;
+    }
+
+    .btn-large {
+      padding: 1rem 2rem;
+      font-size: 1.1rem;
+    }
+
+    .btn-primary {
+      background: #2ea44f;
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #22863a;
+    }
+
+    .btn-primary:disabled {
+      background: #94d3a2;
+      cursor: not-allowed;
+    }
+
+    .btn-secondary {
+      background: #fafbfc;
+      border: 1px solid #e1e4e8;
+      color: #24292e;
+    }
+
+    .btn-secondary:hover {
+      background: #f3f4f6;
+    }
+
+    .btn-github {
+      background: #24292e;
+      color: white;
+    }
+
+    .btn-github:hover {
+      background: #000;
+    }
+
+    /* Output Section */
+    .output-section {
+      display: none;
+      background: white;
+      border: 1px solid #e1e4e8;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .output-section.visible {
+      display: block;
+    }
+
+    .output-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 1.5rem;
+      background: #f6f8fa;
+      border-bottom: 1px solid #e1e4e8;
+    }
+
+    .output-header h3 {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .output-tabs {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .output-tab {
+      padding: 0.5rem 1rem;
+      border: 1px solid #e1e4e8;
+      background: white;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    .output-tab.active {
+      background: #0366d6;
+      color: white;
+      border-color: #0366d6;
+    }
+
+    .output-content {
+      padding: 1.5rem;
+    }
+
+    .markdown-output {
+      width: 100%;
+      min-height: 300px;
+      font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 0.9rem;
+      border: 1px solid #e1e4e8;
+      border-radius: 6px;
+      padding: 1rem;
+      resize: vertical;
+      background: #fafbfc;
+    }
+
+    .preview-output {
+      display: none;
+      min-height: 300px;
+      border: 1px solid #e1e4e8;
+      border-radius: 6px;
+      padding: 1rem;
+      overflow-y: auto;
+      background: white;
+    }
+
+    .preview-output.visible {
+      display: block;
+    }
+
+    .preview-output h1, .preview-output h2, .preview-output h3 {
+      margin-top: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .preview-output h1:first-child, .preview-output h2:first-child {
+      margin-top: 0;
+    }
+
+    .preview-output table {
+      border-collapse: collapse;
+      width: 100%;
+      margin: 1rem 0;
+    }
+
+    .preview-output th, .preview-output td {
+      border: 1px solid #dfe2e5;
+      padding: 0.6rem 1rem;
+      text-align: left;
+    }
+
+    .preview-output th {
+      background: #f6f8fa;
+    }
+
+    .preview-output code {
+      background: #f6f8fa;
+      padding: 0.2rem 0.4rem;
+      border-radius: 3px;
+      font-size: 0.9em;
+    }
+
+    .preview-output blockquote {
+      border-left: 4px solid #dfe2e5;
+      margin: 1rem 0;
+      padding: 0.5rem 1rem;
+      color: #6a737d;
+      background: #f6f8fa;
+    }
+
+    /* Action Buttons */
+    .output-actions {
+      display: flex;
+      gap: 1rem;
+      padding: 1.5rem;
+      border-top: 1px solid #e1e4e8;
+      background: #f6f8fa;
+    }
+
+    .output-actions .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Forum Post Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-overlay.visible {
+      display: flex;
+    }
+
+    .modal {
+      background: white;
+      border-radius: 6px;
+      width: 100%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid #e1e4e8;
+    }
+
+    .modal-header h3 {
+      margin: 0;
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+      font-size: 0.9rem;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      border: 1px solid #e1e4e8;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-family: inherit;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #0366d6;
+      box-shadow: 0 0 0 3px rgba(3, 102, 214, 0.1);
+    }
+
+    .modal-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid #e1e4e8;
+      display: flex;
+      gap: 0.5rem;
+      justify-content: flex-end;
+    }
+
+    /* Auth Notice */
+    .auth-notice {
+      background: #fff8c5;
+      border: 1px solid #f9c513;
+      border-radius: 6px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+    }
+
+    .auth-notice a {
+      color: #0366d6;
+    }
+
+    /* Status Messages */
+    .status-message {
+      padding: 1rem;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    .status-message.visible {
+      display: block;
+    }
+
+    .status-message.success {
+      background: #dcffe4;
+      border: 1px solid #34d058;
+      color: #22863a;
+    }
+
+    .status-message.error {
+      background: #ffeef0;
+      border: 1px solid #f97583;
+      color: #cb2431;
+    }
+
+    /* Loading */
+    .loading-spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid #e1e4e8;
+      border-top-color: #0366d6;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-right: 0.5rem;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .input-section {
+        grid-template-columns: 1fr;
+      }
+
+      .container {
+        padding: 1rem;
+      }
+
+      .output-actions {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <h1>{{ site.title }}</h1>
+    <p>{{ site.description }}</p>
+    <nav class="header-nav">
+      <a href="{{ '/' | relative_url }}">← Back to Docs</a>
+      <a href="{{ '/forum' | relative_url }}">Discussion Forum</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="page-intro">
+      <h2>Rich Text to Markdown Converter</h2>
+      <p>Convert formatted text from Word, Google Docs, or other editors into Markdown. You can paste content directly or upload a .docx file.</p>
+    </div>
+
+    <div id="status-message" class="status-message"></div>
+
+    <div class="input-section">
+      <!-- Paste Option -->
+      <div class="input-card">
+        <h3><span class="icon">📋</span> Paste Formatted Text</h3>
+        <div
+          id="paste-area"
+          class="paste-area"
+          contenteditable="true"
+          data-placeholder="Paste formatted text here (Ctrl/Cmd + V)..."
+        ></div>
+        <p class="paste-hint">Copy text from Word, Google Docs, or any rich text editor and paste it here. Formatting will be preserved.</p>
+      </div>
+
+      <!-- Upload Option -->
+      <div class="input-card">
+        <h3><span class="icon">📄</span> Upload Word Document</h3>
+        <div id="upload-zone" class="upload-zone">
+          <div class="upload-icon">📁</div>
+          <p>Drag and drop a .docx file here</p>
+          <p>or <span class="browse-link">browse to upload</span></p>
+        </div>
+        <input type="file" id="file-input" class="file-input" accept=".docx">
+        <div id="file-info" class="file-info">
+          <span class="file-icon">📄</span>
+          <div class="file-details">
+            <div id="file-name" class="file-name"></div>
+            <div id="file-size" class="file-size"></div>
+          </div>
+          <button id="remove-file" class="remove-file" title="Remove file">×</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="convert-section">
+      <button id="convert-btn" class="btn btn-primary btn-large" disabled>
+        Convert to Markdown
+      </button>
+    </div>
+
+    <!-- Output Section -->
+    <div id="output-section" class="output-section">
+      <div class="output-header">
+        <h3>Converted Markdown</h3>
+        <div class="output-tabs">
+          <button class="output-tab active" data-tab="markdown">Markdown</button>
+          <button class="output-tab" data-tab="preview">Preview</button>
+        </div>
+      </div>
+      <div class="output-content">
+        <textarea id="markdown-output" class="markdown-output" placeholder="Converted markdown will appear here..."></textarea>
+        <div id="preview-output" class="preview-output"></div>
+      </div>
+      <div class="output-actions">
+        <button id="download-btn" class="btn btn-secondary">
+          <span>⬇️</span> Download .md File
+        </button>
+        <button id="copy-btn" class="btn btn-secondary">
+          <span>📋</span> Copy to Clipboard
+        </button>
+        <button id="post-to-forum-btn" class="btn btn-secondary">
+          <span>💬</span> Post to Forum
+        </button>
+        <button id="add-to-site-btn" class="btn btn-primary">
+          <span>📚</span> Add to Site
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Post to Forum Modal -->
+  <div id="forum-modal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Post to Discussion Forum</h3>
+      </div>
+      <div class="modal-body">
+        <div id="auth-notice" class="auth-notice">
+          You need to sign in with GitHub to post to the forum.
+          <a href="{{ '/forum' | relative_url }}">Go to Forum to sign in</a>
+        </div>
+        <form id="forum-form">
+          <div class="form-group">
+            <label for="post-title">Discussion Title</label>
+            <input type="text" id="post-title" placeholder="Enter a title for your post" required>
+          </div>
+          <div class="form-group">
+            <label for="post-category">Category</label>
+            <select id="post-category">
+              <option value="general">General Discussion</option>
+              <option value="feedback">Feedback on Document</option>
+              <option value="suggestion">Suggestion</option>
+              <option value="question">Question</option>
+            </select>
+          </div>
+          <p style="font-size: 0.85rem; color: #6a737d;">
+            The converted markdown content will be used as the post body.
+          </p>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="cancel-modal" class="btn btn-secondary">Cancel</button>
+        <button type="button" id="submit-forum-post" class="btn btn-primary">Post Discussion</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add to Site Modal -->
+  <div id="add-to-site-modal" class="modal-overlay">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Add Document to Site</h3>
+      </div>
+      <div class="modal-body">
+        <div id="add-auth-notice" class="auth-notice">
+          You need to sign in with GitHub to add documents to the site.
+          <br><br>
+          <button id="add-site-login-btn" class="btn btn-github" style="width: 100%;">
+            Sign in with GitHub
+          </button>
+        </div>
+        <form id="add-to-site-form">
+          <div class="form-group">
+            <label for="doc-title">Document Title</label>
+            <input type="text" id="doc-title" placeholder="e.g., My Research Notes" required>
+            <p class="form-hint" style="font-size: 0.8rem; color: #6a737d; margin-top: 0.25rem;">This will appear in the sidebar navigation</p>
+          </div>
+          <div class="form-group">
+            <label for="doc-filename">Filename (URL slug)</label>
+            <input type="text" id="doc-filename" placeholder="e.g., my-research-notes" required pattern="[a-z0-9-]+">
+            <p class="form-hint" style="font-size: 0.8rem; color: #6a737d; margin-top: 0.25rem;">Lowercase letters, numbers, and hyphens only. Will be accessible at /your-filename</p>
+          </div>
+          <div class="info-box" style="background: #f1f8ff; border: 1px solid #c8e1ff; border-radius: 6px; padding: 0.75rem; font-size: 0.85rem; color: #0366d6;">
+            <strong>What happens:</strong>
+            <ul style="margin: 0.5rem 0 0 0; padding-left: 1.25rem;">
+              <li>Your document will be committed directly to the repository</li>
+              <li>It will appear in the "Contributed" section of the sidebar</li>
+              <li>The site will rebuild automatically (takes ~1 minute)</li>
+            </ul>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="cancel-add-modal" class="btn btn-secondary">Cancel</button>
+        <button type="button" id="submit-add-to-site" class="btn btn-primary">Add to Site</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Configuration
+    const REPO_OWNER = 'pawj-gne';
+    const REPO_NAME = 'facs-scientist-job-family-matrix';
+    const DISCUSSION_LABEL = 'discussion';
+    const BRANCH = 'main';
+
+    // State
+    let accessToken = localStorage.getItem('github_token');
+    let currentUser = null;
+    let currentMarkdown = '';
+    let uploadedFile = null;
+
+    // DOM Elements
+    const pasteArea = document.getElementById('paste-area');
+    const uploadZone = document.getElementById('upload-zone');
+    const fileInput = document.getElementById('file-input');
+    const fileInfo = document.getElementById('file-info');
+    const fileName = document.getElementById('file-name');
+    const fileSize = document.getElementById('file-size');
+    const removeFileBtn = document.getElementById('remove-file');
+    const convertBtn = document.getElementById('convert-btn');
+    const outputSection = document.getElementById('output-section');
+    const markdownOutput = document.getElementById('markdown-output');
+    const previewOutput = document.getElementById('preview-output');
+    const downloadBtn = document.getElementById('download-btn');
+    const copyBtn = document.getElementById('copy-btn');
+    const postToForumBtn = document.getElementById('post-to-forum-btn');
+    const addToSiteBtn = document.getElementById('add-to-site-btn');
+    const forumModal = document.getElementById('forum-modal');
+    const addToSiteModal = document.getElementById('add-to-site-modal');
+    const authNotice = document.getElementById('auth-notice');
+    const addAuthNotice = document.getElementById('add-auth-notice');
+    const forumForm = document.getElementById('forum-form');
+    const addToSiteForm = document.getElementById('add-to-site-form');
+    const cancelModal = document.getElementById('cancel-modal');
+    const cancelAddModal = document.getElementById('cancel-add-modal');
+    const submitForumPost = document.getElementById('submit-forum-post');
+    const submitAddToSite = document.getElementById('submit-add-to-site');
+    const addSiteLoginBtn = document.getElementById('add-site-login-btn');
+    const statusMessage = document.getElementById('status-message');
+    const outputTabs = document.querySelectorAll('.output-tab');
+    const docTitleInput = document.getElementById('doc-title');
+    const docFilenameInput = document.getElementById('doc-filename');
+
+    // Initialize Turndown
+    const turndownService = new TurndownService({
+      headingStyle: 'atx',
+      codeBlockStyle: 'fenced',
+      bulletListMarker: '-'
+    });
+
+    // Custom rules for better conversion
+    turndownService.addRule('tableCell', {
+      filter: ['th', 'td'],
+      replacement: function(content, node) {
+        return ' ' + content.trim() + ' |';
+      }
+    });
+
+    turndownService.addRule('tableRow', {
+      filter: 'tr',
+      replacement: function(content, node) {
+        return '|' + content + '\n';
+      }
+    });
+
+    turndownService.addRule('table', {
+      filter: 'table',
+      replacement: function(content, node) {
+        const rows = content.trim().split('\n').filter(r => r);
+        if (rows.length === 0) return '';
+
+        // Add header separator after first row
+        const firstRow = rows[0];
+        const cellCount = (firstRow.match(/\|/g) || []).length - 1;
+        const separator = '|' + ' --- |'.repeat(cellCount);
+
+        return rows[0] + '\n' + separator + '\n' + rows.slice(1).join('\n') + '\n\n';
+      }
+    });
+
+    // Initialize
+    init();
+
+    async function init() {
+      setupEventListeners();
+      checkInputState();
+
+      // Check auth status and load user
+      if (accessToken) {
+        await loadUser();
+      }
+    }
+
+    async function loadUser() {
+      try {
+        const response = await fetch('https://api.github.com/user', {
+          headers: { 'Authorization': `token ${accessToken}` }
+        });
+        if (response.ok) {
+          currentUser = await response.json();
+          authNotice.style.display = 'none';
+          addAuthNotice.style.display = 'none';
+          addToSiteForm.style.display = 'block';
+          submitAddToSite.disabled = false;
+        } else {
+          logout();
+        }
+      } catch (error) {
+        console.error('Error loading user:', error);
+        logout();
+      }
+    }
+
+    function logout() {
+      accessToken = null;
+      currentUser = null;
+      localStorage.removeItem('github_token');
+      authNotice.style.display = 'block';
+      addAuthNotice.style.display = 'block';
+      addToSiteForm.style.display = 'none';
+      submitAddToSite.disabled = true;
+    }
+
+    function login() {
+      const token = prompt('Enter your GitHub Personal Access Token:\n\nCreate one at: https://github.com/settings/tokens\nRequired scopes: repo (full control of private repositories)');
+      if (token) {
+        accessToken = token;
+        localStorage.setItem('github_token', token);
+        loadUser();
+      }
+    }
+
+    function setupEventListeners() {
+      // Paste area
+      pasteArea.addEventListener('input', checkInputState);
+      pasteArea.addEventListener('paste', handlePaste);
+      pasteArea.addEventListener('focus', function() {
+        if (this.textContent === '') {
+          this.classList.add('focused');
+        }
+      });
+
+      // File upload
+      uploadZone.addEventListener('click', () => fileInput.click());
+      uploadZone.addEventListener('dragover', handleDragOver);
+      uploadZone.addEventListener('dragleave', handleDragLeave);
+      uploadZone.addEventListener('drop', handleDrop);
+      fileInput.addEventListener('change', handleFileSelect);
+      removeFileBtn.addEventListener('click', removeFile);
+
+      // Convert button
+      convertBtn.addEventListener('click', handleConvert);
+
+      // Output tabs
+      outputTabs.forEach(tab => {
+        tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+      });
+
+      // Action buttons
+      downloadBtn.addEventListener('click', handleDownload);
+      copyBtn.addEventListener('click', handleCopy);
+      postToForumBtn.addEventListener('click', () => showForumModal(true));
+      addToSiteBtn.addEventListener('click', () => showAddToSiteModal(true));
+
+      // Forum Modal
+      cancelModal.addEventListener('click', () => showForumModal(false));
+      submitForumPost.addEventListener('click', handleForumSubmit);
+      forumModal.addEventListener('click', (e) => {
+        if (e.target === forumModal) showForumModal(false);
+      });
+
+      // Add to Site Modal
+      cancelAddModal.addEventListener('click', () => showAddToSiteModal(false));
+      submitAddToSite.addEventListener('click', handleAddToSite);
+      addSiteLoginBtn.addEventListener('click', login);
+      addToSiteModal.addEventListener('click', (e) => {
+        if (e.target === addToSiteModal) showAddToSiteModal(false);
+      });
+
+      // Auto-generate filename from title
+      docTitleInput.addEventListener('input', () => {
+        const title = docTitleInput.value;
+        const slug = title
+          .toLowerCase()
+          .replace(/[^a-z0-9\s-]/g, '')
+          .replace(/\s+/g, '-')
+          .replace(/-+/g, '-')
+          .replace(/^-|-$/g, '');
+        docFilenameInput.value = slug;
+      });
+
+      // Markdown output editing
+      markdownOutput.addEventListener('input', () => {
+        currentMarkdown = markdownOutput.value;
+        updatePreview();
+      });
+    }
+
+    function checkInputState() {
+      const hasContent = pasteArea.textContent.trim().length > 0 || uploadedFile !== null;
+      convertBtn.disabled = !hasContent;
+    }
+
+    // Paste handling
+    function handlePaste(e) {
+      // Let the browser handle the paste, but we'll work with the HTML
+      setTimeout(() => {
+        checkInputState();
+      }, 10);
+    }
+
+    // Drag and drop handling
+    function handleDragOver(e) {
+      e.preventDefault();
+      uploadZone.classList.add('dragover');
+    }
+
+    function handleDragLeave(e) {
+      e.preventDefault();
+      uploadZone.classList.remove('dragover');
+    }
+
+    function handleDrop(e) {
+      e.preventDefault();
+      uploadZone.classList.remove('dragover');
+
+      const files = e.dataTransfer.files;
+      if (files.length > 0) {
+        processFile(files[0]);
+      }
+    }
+
+    function handleFileSelect(e) {
+      if (e.target.files.length > 0) {
+        processFile(e.target.files[0]);
+      }
+    }
+
+    function processFile(file) {
+      if (!file.name.endsWith('.docx')) {
+        showStatus('Please upload a .docx file', 'error');
+        return;
+      }
+
+      uploadedFile = file;
+      fileName.textContent = file.name;
+      fileSize.textContent = formatFileSize(file.size);
+      fileInfo.classList.add('visible');
+      checkInputState();
+    }
+
+    function removeFile() {
+      uploadedFile = null;
+      fileInput.value = '';
+      fileInfo.classList.remove('visible');
+      checkInputState();
+    }
+
+    function formatFileSize(bytes) {
+      if (bytes < 1024) return bytes + ' B';
+      if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+      return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    }
+
+    // Conversion
+    async function handleConvert() {
+      convertBtn.disabled = true;
+      convertBtn.innerHTML = '<span class="loading-spinner"></span> Converting...';
+
+      try {
+        let html = '';
+
+        if (uploadedFile) {
+          // Convert .docx file
+          const arrayBuffer = await uploadedFile.arrayBuffer();
+          const result = await mammoth.convertToHtml({ arrayBuffer: arrayBuffer });
+          html = result.value;
+
+          if (result.messages.length > 0) {
+            console.log('Mammoth messages:', result.messages);
+          }
+        } else if (pasteArea.innerHTML.trim()) {
+          // Use pasted HTML content
+          html = pasteArea.innerHTML;
+        }
+
+        // Convert HTML to Markdown
+        currentMarkdown = turndownService.turndown(html);
+
+        // Clean up the markdown
+        currentMarkdown = cleanupMarkdown(currentMarkdown);
+
+        // Display output
+        markdownOutput.value = currentMarkdown;
+        updatePreview();
+        outputSection.classList.add('visible');
+
+        // Scroll to output
+        outputSection.scrollIntoView({ behavior: 'smooth' });
+
+      } catch (error) {
+        console.error('Conversion error:', error);
+        showStatus('Error converting content: ' + error.message, 'error');
+      } finally {
+        convertBtn.disabled = false;
+        convertBtn.innerHTML = 'Convert to Markdown';
+        checkInputState();
+      }
+    }
+
+    function cleanupMarkdown(md) {
+      return md
+        // Remove excessive blank lines
+        .replace(/\n{3,}/g, '\n\n')
+        // Clean up list formatting
+        .replace(/^(\s*)-\s+/gm, '- ')
+        // Remove trailing whitespace
+        .replace(/[ \t]+$/gm, '')
+        // Ensure file ends with single newline
+        .trim() + '\n';
+    }
+
+    function updatePreview() {
+      // Simple markdown to HTML for preview
+      let html = currentMarkdown
+        // Headers
+        .replace(/^### (.*$)/gm, '<h3>$1</h3>')
+        .replace(/^## (.*$)/gm, '<h2>$1</h2>')
+        .replace(/^# (.*$)/gm, '<h1>$1</h1>')
+        // Bold
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        // Italic
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        // Code
+        .replace(/`(.*?)`/g, '<code>$1</code>')
+        // Links
+        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
+        // Lists
+        .replace(/^- (.*$)/gm, '<li>$1</li>')
+        // Paragraphs
+        .replace(/\n\n/g, '</p><p>')
+        // Line breaks
+        .replace(/\n/g, '<br>');
+
+      previewOutput.innerHTML = '<p>' + html + '</p>';
+    }
+
+    function switchTab(tab) {
+      outputTabs.forEach(t => t.classList.remove('active'));
+      document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+
+      if (tab === 'markdown') {
+        markdownOutput.style.display = 'block';
+        previewOutput.classList.remove('visible');
+      } else {
+        markdownOutput.style.display = 'none';
+        previewOutput.classList.add('visible');
+      }
+    }
+
+    // Actions
+    function handleDownload() {
+      const blob = new Blob([currentMarkdown], { type: 'text/markdown' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+
+      // Generate filename
+      let filename = 'converted-document.md';
+      if (uploadedFile) {
+        filename = uploadedFile.name.replace('.docx', '.md');
+      }
+
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      showStatus('File downloaded successfully!', 'success');
+    }
+
+    async function handleCopy() {
+      try {
+        await navigator.clipboard.writeText(currentMarkdown);
+        showStatus('Copied to clipboard!', 'success');
+        copyBtn.innerHTML = '<span>✓</span> Copied!';
+        setTimeout(() => {
+          copyBtn.innerHTML = '<span>📋</span> Copy to Clipboard';
+        }, 2000);
+      } catch (error) {
+        showStatus('Failed to copy to clipboard', 'error');
+      }
+    }
+
+    function showForumModal(show) {
+      forumModal.classList.toggle('visible', show);
+      if (show) {
+        document.getElementById('post-title').focus();
+        // Check auth
+        if (accessToken) {
+          authNotice.style.display = 'none';
+          submitForumPost.disabled = false;
+        } else {
+          authNotice.style.display = 'block';
+          submitForumPost.disabled = true;
+        }
+      }
+    }
+
+    function showAddToSiteModal(show) {
+      addToSiteModal.classList.toggle('visible', show);
+      if (show) {
+        // Check auth
+        if (accessToken && currentUser) {
+          addAuthNotice.style.display = 'none';
+          addToSiteForm.style.display = 'block';
+          submitAddToSite.disabled = false;
+          docTitleInput.focus();
+        } else {
+          addAuthNotice.style.display = 'block';
+          addToSiteForm.style.display = 'none';
+          submitAddToSite.disabled = true;
+        }
+      }
+    }
+
+    async function handleAddToSite() {
+      if (!accessToken || !currentUser) {
+        showStatus('Please sign in first', 'error');
+        return;
+      }
+
+      const title = docTitleInput.value.trim();
+      const filename = docFilenameInput.value.trim();
+
+      if (!title || !filename) {
+        showStatus('Please enter both a title and filename', 'error');
+        return;
+      }
+
+      // Validate filename
+      if (!/^[a-z0-9-]+$/.test(filename)) {
+        showStatus('Filename can only contain lowercase letters, numbers, and hyphens', 'error');
+        return;
+      }
+
+      submitAddToSite.disabled = true;
+      submitAddToSite.innerHTML = '<span class="loading-spinner"></span> Adding...';
+
+      try {
+        // Prepare the markdown file content with front matter
+        const fileContent = `---
+layout: default
+title: ${title}
+---
+
+${currentMarkdown}`;
+
+        // Step 1: Get current documents.yml content and SHA
+        let documentsYaml = '';
+        let documentsSha = null;
+
+        try {
+          const docsResponse = await fetch(
+            `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/_data/documents.yml?ref=${BRANCH}`,
+            { headers: { 'Authorization': `token ${accessToken}` } }
+          );
+
+          if (docsResponse.ok) {
+            const docsData = await docsResponse.json();
+            documentsSha = docsData.sha;
+            documentsYaml = atob(docsData.content);
+          }
+        } catch (e) {
+          // File might not exist yet, that's OK
+          console.log('documents.yml not found, will create it');
+        }
+
+        // Step 2: Add new document entry to documents.yml
+        const today = new Date().toISOString().split('T')[0];
+        const newEntry = `- title: ${title}
+  path: ${filename}
+  author: ${currentUser.login}
+  date: ${today}
+`;
+
+        // Check if there's actual content (not just comments)
+        const hasExistingDocs = documentsYaml.split('\n').some(line => line.trim().startsWith('- title:'));
+
+        if (hasExistingDocs) {
+          documentsYaml = documentsYaml.trim() + '\n' + newEntry;
+        } else {
+          // Replace comments with actual content
+          documentsYaml = newEntry;
+        }
+
+        // Step 3: Commit both files
+        // First, get the latest commit SHA
+        const refResponse = await fetch(
+          `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/git/ref/heads/${BRANCH}`,
+          { headers: { 'Authorization': `token ${accessToken}` } }
+        );
+        const refData = await refResponse.json();
+        const latestCommitSha = refData.object.sha;
+
+        // Get the tree of the latest commit
+        const commitResponse = await fetch(
+          `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/git/commits/${latestCommitSha}`,
+          { headers: { 'Authorization': `token ${accessToken}` } }
+        );
+        const commitData = await commitResponse.json();
+        const baseTreeSha = commitData.tree.sha;
+
+        // Create blobs for both files
+        const mdBlobResponse = await fetch(
+          `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/git/blobs`,
+          {
+            method: 'POST',
+            headers: {
+              'Authorization': `token ${accessToken}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              content: fileContent,
+              encoding: 'utf-8'
+            })
+          }
+        );
+        const mdBlobData = await mdBlobResponse.json();
+
+        const yamlBlobResponse = await fetch(
+          `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/git/blobs`,
+          {
+            method: 'POST',
+            headers: {
+              'Authorization': `token ${accessToken}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              content: documentsYaml,
+              encoding: 'utf-8'
+            })
+          }
+        );
+        const yamlBlobData = await yamlBlobResponse.json();
+
+        // Create a new tree with both files
+        const treeResponse = await fetch(
+          `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/git/trees`,
+          {
+            method: 'POST',
+            headers: {
+              'Authorization': `token ${accessToken}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              base_tree: baseTreeSha,
+              tree: [
+                {
+                  path: `${filename}.md`,
+                  mode: '100644',
+                  type: 'blob',
+                  sha: mdBlobData.sha
+                },
+                {
+                  path: '_data/documents.yml',
+                  mode: '100644',
+                  type: 'blob',
+                  sha: yamlBlobData.sha
+                }
+              ]
+            })
+          }
+        );
+        const treeData = await treeResponse.json();
+
+        // Create a new commit
+        const newCommitResponse = await fetch(
+          `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/git/commits`,
+          {
+            method: 'POST',
+            headers: {
+              'Authorization': `token ${accessToken}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              message: `Add document: ${title}`,
+              tree: treeData.sha,
+              parents: [latestCommitSha]
+            })
+          }
+        );
+        const newCommitData = await newCommitResponse.json();
+
+        // Update the reference
+        const updateRefResponse = await fetch(
+          `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/git/refs/heads/${BRANCH}`,
+          {
+            method: 'PATCH',
+            headers: {
+              'Authorization': `token ${accessToken}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              sha: newCommitData.sha
+            })
+          }
+        );
+
+        if (updateRefResponse.ok) {
+          showAddToSiteModal(false);
+          const siteUrl = `https://${REPO_OWNER}.github.io/${REPO_NAME}/${filename}`;
+          showStatus(`Document added successfully! It will be available at <a href="${siteUrl}" target="_blank">${siteUrl}</a> after the site rebuilds (~1 minute).`, 'success');
+          addToSiteForm.reset();
+        } else {
+          const error = await updateRefResponse.json();
+          throw new Error(error.message || 'Failed to update repository');
+        }
+
+      } catch (error) {
+        console.error('Error adding to site:', error);
+        showStatus('Error adding document: ' + error.message, 'error');
+      } finally {
+        submitAddToSite.disabled = false;
+        submitAddToSite.innerHTML = 'Add to Site';
+      }
+    }
+
+    async function handleForumSubmit() {
+      if (!accessToken) {
+        showStatus('Please sign in to the forum first', 'error');
+        return;
+      }
+
+      const title = document.getElementById('post-title').value.trim();
+      const category = document.getElementById('post-category').value;
+
+      if (!title) {
+        showStatus('Please enter a title', 'error');
+        return;
+      }
+
+      submitForumPost.disabled = true;
+      submitForumPost.innerHTML = '<span class="loading-spinner"></span> Posting...';
+
+      try {
+        const response = await fetch(
+          `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/issues`,
+          {
+            method: 'POST',
+            headers: {
+              'Authorization': `token ${accessToken}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              title: title,
+              body: currentMarkdown,
+              labels: [DISCUSSION_LABEL, category]
+            })
+          }
+        );
+
+        if (response.ok) {
+          const issue = await response.json();
+          showModal(false);
+          showStatus('Posted to forum successfully! <a href="' + issue.html_url + '" target="_blank">View post</a>', 'success');
+          forumForm.reset();
+        } else {
+          const error = await response.json();
+          throw new Error(error.message || 'Failed to create post');
+        }
+      } catch (error) {
+        console.error('Error posting to forum:', error);
+        showStatus('Error posting to forum: ' + error.message, 'error');
+      } finally {
+        submitForumPost.disabled = false;
+        submitForumPost.innerHTML = 'Post Discussion';
+      }
+    }
+
+    function showStatus(message, type) {
+      statusMessage.innerHTML = message;
+      statusMessage.className = 'status-message visible ' + type;
+
+      if (type === 'success') {
+        setTimeout(() => {
+          statusMessage.classList.remove('visible');
+        }, 5000);
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+# Contributed Documents
+# This file is automatically updated when users add documents via the converter
+# Format:
+#   - title: Document Title
+#     path: filename-without-extension
+#     author: github-username (optional)
+#     date: YYYY-MM-DD (optional)
+
+# Example:
+# - title: My New Document
+#   path: my-new-document
+#   author: pawj-gne
+#   date: 2025-01-16
