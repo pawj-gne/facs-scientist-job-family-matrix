@@ -16,7 +16,8 @@
       "Bash(git push:*)",
       "mcp__github__create_repository",
       "mcp__github__create_pull_request",
-      "mcp__github__push_files"
+      "mcp__github__push_files",
+      "Bash(gh api:*)"
     ]
   },
   "enableAllProjectMcpServers": true,
