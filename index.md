@@ -53,3 +53,11 @@ A career progression framework for Flow Cytometry Core Facility Scientists that 
 | Sci 2 | Executes, Maintains, Performs, Operates |
 | Sci 3 | Consults, Designs, Troubleshoots, Advises |
 | Sci 4 | Leads, Validates, Publishes, Innovates |
+
+---
+
+## Have Feedback?
+
+**[Comments & Suggestions →](CONTRIBUTING.md)**
+
+We welcome your input on this framework.
