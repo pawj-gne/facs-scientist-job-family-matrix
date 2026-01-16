@@ -718,6 +718,7 @@
     const REPO_NAME = 'facs-scientist-job-family-matrix';
     const DISCUSSION_LABEL = 'discussion';
     const CLIENT_ID = 'YOUR_GITHUB_OAUTH_CLIENT_ID'; // You'll need to create this
+    const BASE_URL = '{{ "/" | relative_url }}'.replace(/\/$/, ''); // Site base URL without trailing slash
 
     // Documents list for autocomplete
     const DOCUMENTS = [
@@ -802,21 +803,15 @@
 
     function checkForPrefill() {
       const prefillData = sessionStorage.getItem('forumPrefill');
-      console.log('[Forum Debug] prefillData from sessionStorage:', prefillData);
       if (!prefillData) return;
 
       try {
         const data = JSON.parse(prefillData);
-        console.log('[Forum Debug] Parsed data:', data);
-        console.log('[Forum Debug] sourceDocument:', data.sourceDocument);
-        console.log('[Forum Debug] DOCUMENTS paths:', DOCUMENTS.map(d => d.path));
         sessionStorage.removeItem('forumPrefill');
 
         // Find matching document for proper reference syntax
         const doc = DOCUMENTS.find(d => d.path === data.sourceDocument);
-        console.log('[Forum Debug] Found doc:', doc);
         const docRef = doc ? `[[${doc.path}]]` : '';
-        console.log('[Forum Debug] docRef:', docRef);
 
         // Build the pre-filled body with blockquote
         const quotedText = data.selectedText
@@ -1308,7 +1303,7 @@
             ? '?highlight=' + encodeURIComponent(quotedText.substring(0, 200))
             : '';
           docRefs.push('<div class="doc-reference">' +
-            '<div class="doc-reference-header">📄 Referenced: <a href="/' + path + '/' + highlightParam + '">' + doc.name + '</a></div>' +
+            '<div class="doc-reference-header">📄 Referenced: <a href="' + BASE_URL + '/' + path + '/' + highlightParam + '">' + doc.name + '</a></div>' +
             (quotedText ? '<div class="doc-reference-hint">Click to view highlighted passage</div>' : '') +
           '</div>');
           return placeholder;
