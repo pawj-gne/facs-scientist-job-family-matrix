@@ -1305,7 +1305,7 @@
             ? `?highlight=${encodeURIComponent(quotedText.substring(0, 200))}`
             : '';
           return `<div class="doc-reference">
-            <div class="doc-reference-header">📄 Referenced: <a href="/${path}${highlightParam}" class="doc-ref-link">${doc.name}</a></div>
+            <div class="doc-reference-header">📄 Referenced: <a href="/${path}/${highlightParam}" class="doc-ref-link">${doc.name}</a></div>
             ${quotedText ? '<div class="doc-reference-hint">Click to view highlighted passage</div>' : ''}
           </div>`;
         }
