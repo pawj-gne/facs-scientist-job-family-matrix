@@ -226,6 +226,158 @@
       50% { box-shadow: 0 0 0 4px #ffc107, 0 0 12px rgba(255, 193, 7, 0.5); }
     }
 
+    /* Comment indicators in right margin */
+    .comment-indicators {
+      position: fixed;
+      right: 20px;
+      top: 120px;
+      width: 30px;
+      z-index: 100;
+      pointer-events: none;
+    }
+
+    .comment-indicator {
+      position: absolute;
+      right: 0;
+      width: 24px;
+      height: 24px;
+      background: #0366d6;
+      color: white;
+      border-radius: 50%;
+      font-size: 11px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      pointer-events: auto;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+
+    .comment-indicator:hover {
+      transform: scale(1.15);
+      background: #0256b9;
+    }
+
+    .comment-indicator.has-highlight {
+      background: #ffc107;
+      color: #333;
+    }
+
+    .comment-indicator svg {
+      width: 12px;
+      height: 12px;
+      fill: currentColor;
+    }
+
+    /* Comment popup */
+    .comment-popup {
+      position: absolute;
+      right: 35px;
+      background: white;
+      border: 1px solid #e1e4e8;
+      border-radius: 6px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      width: 300px;
+      max-height: 400px;
+      overflow-y: auto;
+      z-index: 1001;
+      display: none;
+    }
+
+    .comment-popup.visible {
+      display: block;
+    }
+
+    .comment-popup-header {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid #e1e4e8;
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: #24292e;
+      background: #f6f8fa;
+      border-radius: 6px 6px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .comment-popup-close {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      color: #6a737d;
+      font-size: 1.2rem;
+      line-height: 1;
+    }
+
+    .comment-popup-close:hover {
+      color: #24292e;
+    }
+
+    .comment-popup-item {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .comment-popup-item:last-child {
+      border-bottom: none;
+    }
+
+    .comment-popup-quote {
+      font-size: 0.8rem;
+      color: #6a737d;
+      font-style: italic;
+      margin-bottom: 0.5rem;
+      padding-left: 0.5rem;
+      border-left: 2px solid #dfe2e5;
+      max-height: 3em;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .comment-popup-meta {
+      font-size: 0.75rem;
+      color: #6a737d;
+      margin-bottom: 0.25rem;
+    }
+
+    .comment-popup-title {
+      font-size: 0.85rem;
+      color: #0366d6;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .comment-popup-title:hover {
+      text-decoration: underline;
+    }
+
+    .comment-popup-stats {
+      font-size: 0.75rem;
+      color: #6a737d;
+      margin-top: 0.25rem;
+    }
+
+    /* Highlighted text with comment (persistent) */
+    .has-comment {
+      background: rgba(255, 235, 59, 0.25);
+      border-bottom: 2px dotted #ffc107;
+      cursor: pointer;
+    }
+
+    .has-comment:hover {
+      background: rgba(255, 235, 59, 0.4);
+    }
+
+    @media (max-width: 1100px) {
+      .comment-indicators {
+        display: none;
+      }
+    }
+
     /* Forum notification badge */
     .notification-badge {
       display: inline-flex;
@@ -251,12 +403,275 @@
       0%, 100% { transform: scale(1); }
       50% { transform: scale(1.1); }
     }
+
+    /* Header with forum link */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-content {
+      flex: 1;
+    }
+
+    .header-forum-link {
+      color: white;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: rgba(255,255,255,0.15);
+      border-radius: 6px;
+      font-size: 0.9rem;
+      transition: background 0.2s;
+    }
+
+    .header-forum-link:hover {
+      background: rgba(255,255,255,0.25);
+    }
+
+    .header-forum-link svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+
+    .header-forum-link .notification-badge {
+      margin-left: 0.25rem;
+    }
+
+    /* Three-tier hero section */
+    .tier-hero {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      border-radius: 12px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      text-align: center;
+    }
+
+    .tier-hero h2 {
+      margin: 0 0 1.5rem 0;
+      font-size: 1.1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #6a737d;
+      border-bottom: none;
+    }
+
+    .tier-cards {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+
+    .tier-card {
+      flex: 1;
+      max-width: 200px;
+      padding: 1.5rem 1rem;
+      border-radius: 8px;
+      color: white;
+      text-align: center;
+    }
+
+    .tier-card.operator {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .tier-card.consultant {
+      background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+    }
+
+    .tier-card.investigator {
+      background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+    }
+
+    .tier-card-title {
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .tier-card-level {
+      font-size: 0.85rem;
+      opacity: 0.9;
+      margin-bottom: 0.5rem;
+    }
+
+    .tier-card-focus {
+      font-size: 0.8rem;
+      opacity: 0.85;
+      font-style: italic;
+    }
+
+    /* Navigation cards */
+    .nav-cards {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .nav-card {
+      background: white;
+      border: 1px solid #e1e4e8;
+      border-radius: 12px;
+      padding: 1.5rem;
+      cursor: pointer;
+      transition: box-shadow 0.2s, transform 0.2s, border-color 0.2s;
+      position: relative;
+    }
+
+    .nav-card:hover {
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      transform: translateY(-2px);
+      border-color: #0366d6;
+    }
+
+    .nav-card.expanded {
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+      border-color: #0366d6;
+    }
+
+    .nav-card-icon {
+      font-size: 2rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .nav-card-title {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: #24292e;
+      margin-bottom: 0.5rem;
+    }
+
+    .nav-card-description {
+      color: #586069;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      margin-bottom: 1rem;
+    }
+
+    .nav-card-cta {
+      color: #0366d6;
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    /* Expandable sub-links */
+    .nav-card-links {
+      display: none;
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid #e1e4e8;
+    }
+
+    .nav-card.expanded .nav-card-links {
+      display: block;
+    }
+
+    .nav-card.expanded .nav-card-description,
+    .nav-card.expanded .nav-card-cta {
+      display: none;
+    }
+
+    .nav-card-links a {
+      display: flex;
+      align-items: center;
+      padding: 0.6rem 0;
+      color: #0366d6;
+      text-decoration: none;
+      font-size: 0.95rem;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .nav-card-links a:last-child {
+      border-bottom: none;
+    }
+
+    .nav-card-links a:hover {
+      color: #0256b9;
+    }
+
+    .nav-card-links a::before {
+      content: "→";
+      margin-right: 0.5rem;
+      color: #6a737d;
+    }
+
+    /* Principles bar */
+    .principles-bar {
+      background: #f6f8fa;
+      border: 1px solid #e1e4e8;
+      border-radius: 8px;
+      padding: 1rem 1.5rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem 2rem;
+      justify-content: center;
+    }
+
+    .principle-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.85rem;
+      color: #24292e;
+    }
+
+    .principle-item::before {
+      content: "✓";
+      color: #28a745;
+      font-weight: 700;
+    }
+
+    /* Responsive adjustments for cards */
+    @media (max-width: 768px) {
+      .tier-cards {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .tier-card {
+        max-width: 100%;
+        width: 100%;
+      }
+
+      .nav-cards {
+        grid-template-columns: 1fr;
+      }
+
+      .principles-bar {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+      }
+
+      .header-forum-link {
+        align-self: flex-start;
+      }
+    }
   </style>
 </head>
 <body>
   <header class="header">
-    <h1>{{ site.title }}</h1>
-    <p>{{ site.description }}</p>
+    <div class="header-content">
+      <h1>{{ site.title }}</h1>
+      <p>{{ site.description }}</p>
+    </div>
+    <a href="{{ '/forum' | relative_url }}" class="header-forum-link" id="header-forum-link">
+      <svg viewBox="0 0 16 16"><path d="M1.5 2.75a.25.25 0 01.25-.25h12.5a.25.25 0 01.25.25v8.5a.25.25 0 01-.25.25h-6.5a.75.75 0 00-.53.22L4.5 14.44v-2.19a.75.75 0 00-.75-.75h-2a.25.25 0 01-.25-.25v-8.5zM1.75 1A1.75 1.75 0 000 2.75v8.5C0 12.216.784 13 1.75 13H3v1.543a1.457 1.457 0 002.487 1.03L8.061 13h6.189A1.75 1.75 0 0016 11.25v-8.5A1.75 1.75 0 0014.25 1H1.75z"/></svg>
+      Forum
+      <span id="header-forum-badge" class="notification-badge" style="display: none;">0</span>
+    </a>
   </header>
 
   <div class="container">
@@ -272,6 +687,9 @@
     <svg viewBox="0 0 16 16"><path d="M1.5 2.75a.25.25 0 01.25-.25h12.5a.25.25 0 01.25.25v8.5a.25.25 0 01-.25.25h-6.5a.75.75 0 00-.53.22L4.5 14.44v-2.19a.75.75 0 00-.75-.75h-2a.25.25 0 01-.25-.25v-8.5zM1.75 1A1.75 1.75 0 000 2.75v8.5C0 12.216.784 13 1.75 13H3v1.543a1.457 1.457 0 002.487 1.03L8.061 13h6.189A1.75 1.75 0 0016 11.25v-8.5A1.75 1.75 0 0014.25 1H1.75z"/></svg>
     Discuss this
   </div>
+
+  <!-- Comment indicators container -->
+  <div id="comment-indicators" class="comment-indicators"></div>
 
   <script>
   (function() {
@@ -452,7 +870,7 @@
     const DISCUSSION_LABEL = 'discussion';
 
     const badge = document.getElementById('forum-badge');
-    if (!badge) return;
+    const headerBadge = document.getElementById('header-forum-badge');
 
     // Get stored GitHub token and user
     const token = localStorage.getItem('github_token');
@@ -506,20 +924,310 @@
           }
         }
 
-        // Update badge
-        if (unreadCount > 0) {
-          badge.textContent = unreadCount > 99 ? '99+' : unreadCount;
-          badge.style.display = 'inline-flex';
-          badge.classList.add('pulse');
-        } else {
-          badge.style.display = 'none';
-        }
+        // Update badges (both sidebar and header)
+        const updateBadge = (badgeEl) => {
+          if (!badgeEl) return;
+          if (unreadCount > 0) {
+            badgeEl.textContent = unreadCount > 99 ? '99+' : unreadCount;
+            badgeEl.style.display = 'inline-flex';
+            badgeEl.classList.add('pulse');
+          } else {
+            badgeEl.style.display = 'none';
+          }
+        };
+
+        updateBadge(badge);
+        updateBadge(headerBadge);
       } catch (error) {
         console.log('Forum badge error:', error);
       }
     }
 
     initBadge();
+  })();
+
+  // Comment indicators system - shows markers where forum discussions reference this document
+  (function() {
+    const PAGE_PATH = '{{ page.url }}'.replace(/^\/|\/$/g, '').replace('.html', '');
+    const REPO_OWNER = 'pawj-gne';
+    const REPO_NAME = 'facs-scientist-job-family-matrix';
+    const DISCUSSION_LABEL = 'discussion';
+    const FORUM_URL = '{{ "/forum" | relative_url }}';
+
+    const indicatorsContainer = document.getElementById('comment-indicators');
+    const contentArea = document.querySelector('.content');
+
+    if (!indicatorsContainer || !contentArea) return;
+
+    // Get stored GitHub token
+    const token = localStorage.getItem('github_token');
+
+    let activePopup = null;
+    let documentComments = []; // Stores comments with their matched positions
+
+    async function initCommentIndicators() {
+      try {
+        // Fetch forum posts - works with or without auth (public repo)
+        const headers = token ? { 'Authorization': 'token ' + token } : {};
+        const postsResponse = await fetch(
+          'https://api.github.com/repos/' + REPO_OWNER + '/' + REPO_NAME + '/issues?labels=' + DISCUSSION_LABEL + '&state=all&per_page=100',
+          { headers: headers }
+        );
+
+        if (!postsResponse.ok) return;
+
+        const posts = await postsResponse.json();
+
+        // Find posts that reference this document
+        const relevantPosts = [];
+        for (const post of posts) {
+          // Check if post body references this document
+          const docRefPattern = new RegExp('\\[\\[' + PAGE_PATH + '\\]\\]', 'i');
+          if (post.body && docRefPattern.test(post.body)) {
+            // Extract the quoted text from blockquote
+            const blockquoteMatch = post.body.match(/^> (.+(?:\n> .+)*)/m);
+            const quotedText = blockquoteMatch
+              ? blockquoteMatch[0].replace(/^> /gm, '').trim()
+              : '';
+
+            if (quotedText) {
+              relevantPosts.push({
+                number: post.number,
+                title: post.title,
+                author: post.user.login,
+                comments: post.comments,
+                createdAt: new Date(post.created_at),
+                quotedText: quotedText,
+                url: FORUM_URL + '?post=' + post.number
+              });
+            }
+          }
+        }
+
+        if (relevantPosts.length === 0) return;
+
+        // Find quoted text positions in document and create indicators
+        findQuotedTextPositions(relevantPosts);
+
+      } catch (error) {
+        console.log('Comment indicators error:', error);
+      }
+    }
+
+    function findQuotedTextPositions(posts) {
+      // Collect all text nodes in content area
+      const walker = document.createTreeWalker(
+        contentArea,
+        NodeFilter.SHOW_TEXT,
+        null,
+        false
+      );
+
+      let accumulatedText = '';
+      const textNodes = [];
+
+      while (walker.nextNode()) {
+        textNodes.push({
+          node: walker.currentNode,
+          start: accumulatedText.length,
+          text: walker.currentNode.textContent
+        });
+        accumulatedText += walker.currentNode.textContent;
+      }
+
+      const normalizedContent = accumulatedText.replace(/\s+/g, ' ').toLowerCase();
+
+      // Group posts by their matched position (to show multiple comments on same selection)
+      const positionGroups = new Map();
+
+      for (const post of posts) {
+        const normalizedQuote = post.quotedText.replace(/\s+/g, ' ').trim().toLowerCase();
+        const searchText = normalizedQuote.substring(0, 50); // Search for first 50 chars
+        const matchIndex = normalizedContent.indexOf(searchText);
+
+        if (matchIndex !== -1) {
+          // Find which text node contains this match
+          let currentPos = 0;
+          for (let i = 0; i < textNodes.length; i++) {
+            const nodeText = textNodes[i].text.replace(/\s+/g, ' ').toLowerCase();
+            const nodeEnd = currentPos + nodeText.length;
+
+            if (matchIndex >= currentPos && matchIndex < nodeEnd) {
+              const node = textNodes[i].node;
+              const element = node.parentElement;
+
+              if (element) {
+                const rect = element.getBoundingClientRect();
+                const topPos = window.scrollY + rect.top;
+
+                // Round position to group nearby matches
+                const roundedPos = Math.round(topPos / 20) * 20;
+                const key = roundedPos.toString();
+
+                if (!positionGroups.has(key)) {
+                  positionGroups.set(key, {
+                    topPos: topPos,
+                    element: element,
+                    node: node,
+                    offset: matchIndex - currentPos,
+                    posts: []
+                  });
+                }
+                positionGroups.get(key).posts.push(post);
+
+                // Add highlighting to the text
+                highlightCommentedText(node, matchIndex - currentPos, post.quotedText.length);
+              }
+              break;
+            }
+            currentPos = nodeEnd;
+          }
+        }
+      }
+
+      // Create indicators for each position group
+      createIndicators(positionGroups);
+    }
+
+    function highlightCommentedText(node, offset, length) {
+      try {
+        const range = document.createRange();
+        const highlightLength = Math.min(length, node.textContent.length - offset);
+
+        if (offset < 0 || highlightLength <= 0) return;
+
+        range.setStart(node, Math.min(offset, node.textContent.length));
+        range.setEnd(node, Math.min(offset + highlightLength, node.textContent.length));
+
+        const highlightSpan = document.createElement('span');
+        highlightSpan.className = 'has-comment';
+        range.surroundContents(highlightSpan);
+      } catch (e) {
+        // Ignore highlighting errors (can happen with complex DOM structures)
+        console.log('Could not highlight commented text:', e);
+      }
+    }
+
+    function createIndicators(positionGroups) {
+      const contentRect = contentArea.getBoundingClientRect();
+      const contentTop = window.scrollY + contentRect.top;
+
+      positionGroups.forEach((group, key) => {
+        const indicator = document.createElement('div');
+        indicator.className = 'comment-indicator';
+        indicator.style.top = (group.topPos - contentTop + 5) + 'px';
+
+        // Show count if multiple comments
+        if (group.posts.length > 1) {
+          indicator.textContent = group.posts.length;
+        } else {
+          indicator.innerHTML = '<svg viewBox="0 0 16 16"><path d="M1.5 2.75a.25.25 0 01.25-.25h12.5a.25.25 0 01.25.25v8.5a.25.25 0 01-.25.25h-6.5a.75.75 0 00-.53.22L4.5 14.44v-2.19a.75.75 0 00-.75-.75h-2a.25.25 0 01-.25-.25v-8.5zM1.75 1A1.75 1.75 0 000 2.75v8.5C0 12.216.784 13 1.75 13H3v1.543a1.457 1.457 0 002.487 1.03L8.061 13h6.189A1.75 1.75 0 0016 11.25v-8.5A1.75 1.75 0 0014.25 1H1.75z"/></svg>';
+        }
+
+        // Create popup content
+        const popup = document.createElement('div');
+        popup.className = 'comment-popup';
+
+        let popupHtml = '<div class="comment-popup-header"><span>Discussions (' + group.posts.length + ')</span><button class="comment-popup-close">&times;</button></div>';
+
+        for (const post of group.posts) {
+          const truncatedQuote = post.quotedText.length > 80
+            ? post.quotedText.substring(0, 80) + '...'
+            : post.quotedText;
+
+          popupHtml += '<div class="comment-popup-item">' +
+            '<div class="comment-popup-quote">' + escapeHtml(truncatedQuote) + '</div>' +
+            '<div class="comment-popup-meta">@' + post.author + ' · ' + timeAgo(post.createdAt) + '</div>' +
+            '<a href="' + post.url + '" class="comment-popup-title">' + escapeHtml(post.title) + '</a>' +
+            '<div class="comment-popup-stats">💬 ' + post.comments + ' replies</div>' +
+          '</div>';
+        }
+
+        popup.innerHTML = popupHtml;
+        indicator.appendChild(popup);
+
+        // Click handler
+        indicator.addEventListener('click', function(e) {
+          e.stopPropagation();
+
+          if (activePopup && activePopup !== popup) {
+            activePopup.classList.remove('visible');
+          }
+
+          popup.classList.toggle('visible');
+          activePopup = popup.classList.contains('visible') ? popup : null;
+
+          // Position popup
+          const indicatorRect = indicator.getBoundingClientRect();
+          const popupHeight = 300; // Approximate
+
+          if (indicatorRect.top + popupHeight > window.innerHeight) {
+            popup.style.bottom = '0';
+            popup.style.top = 'auto';
+          } else {
+            popup.style.top = '0';
+            popup.style.bottom = 'auto';
+          }
+        });
+
+        // Close button handler
+        popup.querySelector('.comment-popup-close').addEventListener('click', function(e) {
+          e.stopPropagation();
+          popup.classList.remove('visible');
+          activePopup = null;
+        });
+
+        indicatorsContainer.appendChild(indicator);
+      });
+
+      // Close popup when clicking outside
+      document.addEventListener('click', function() {
+        if (activePopup) {
+          activePopup.classList.remove('visible');
+          activePopup = null;
+        }
+      });
+
+      // Update indicator positions on scroll
+      window.addEventListener('scroll', updateIndicatorPositions);
+      window.addEventListener('resize', updateIndicatorPositions);
+    }
+
+    function updateIndicatorPositions() {
+      // Indicators are positioned relative to content, which is handled by CSS
+      // This function can be extended for more complex positioning if needed
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    function timeAgo(date) {
+      const seconds = Math.floor((new Date() - date) / 1000);
+
+      const intervals = {
+        year: 31536000,
+        month: 2592000,
+        week: 604800,
+        day: 86400,
+        hour: 3600,
+        minute: 60
+      };
+
+      for (const [unit, secondsInUnit] of Object.entries(intervals)) {
+        const interval = Math.floor(seconds / secondsInUnit);
+        if (interval >= 1) {
+          return interval + ' ' + unit + (interval === 1 ? '' : 's') + ' ago';
+        }
+      }
+
+      return 'just now';
+    }
+
+    // Initialize after a short delay to let content render
+    setTimeout(initCommentIndicators, 500);
   })();
   </script>
 </body>

@@ -1,55 +1,49 @@
 <nav class="sidebar">
   <div class="sidebar-section">
-    <h3>Core Framework</h3>
+    <h3>📚 Learn</h3>
     <ul>
       <li><a href="{{ '/' | relative_url }}">Home</a></li>
-      <li><a href="{{ '/handover-doc' | relative_url }}">Handover Document</a></li>
+      <li><a href="{{ '/handover-doc' | relative_url }}">Three-Tier Model</a></li>
       <li><a href="{{ '/facs-scientist-promotion-criteria-summary' | relative_url }}">Promotion Criteria</a></li>
       <li><a href="{{ '/promotion-philosophy' | relative_url }}">Promotion Philosophy</a></li>
     </ul>
   </div>
 
   <div class="sidebar-section">
-    <h3>Strategy & Planning</h3>
+    <h3>📋 Apply</h3>
     <ul>
-      <li><a href="{{ '/project-strategies' | relative_url }}">Project Strategies</a></li>
-      <li><a href="{{ '/promotion-project-examples' | relative_url }}">Project Examples</a></li>
+      <li><a href="{{ '/project-strategies' | relative_url }}">Reframing Strategies</a></li>
+      <li><a href="{{ '/promotion-project-examples' | relative_url }}">Worked Examples</a></li>
       <li><a href="{{ '/matrix-planning-doc' | relative_url }}">Matrix Planning</a></li>
     </ul>
   </div>
 
   <div class="sidebar-section">
-    <h3>Reference</h3>
+    <h3>📁 Reference</h3>
     <ul>
       <li><a href="{{ '/orig-matrix-guidelines' | relative_url }}">Original Guidelines</a></li>
-      <li><a href="{{ '/project-challenges' | relative_url }}">Project Challenges</a></li>
-    </ul>
-  </div>
-
-  {% if site.data.documents.size > 0 %}
-  <div class="sidebar-section">
-    <h3>Contributed</h3>
-    <ul>
+      <li><a href="{{ '/project-challenges' | relative_url }}">Challenges</a></li>
+      {% if site.data.documents.size > 0 %}
       {% for doc in site.data.documents %}
       <li><a href="{{ '/' | append: doc.path | relative_url }}">{{ doc.title }}</a></li>
       {% endfor %}
-    </ul>
-  </div>
-  {% endif %}
-
-  <div class="sidebar-section">
-    <h3>Tools</h3>
-    <ul>
-      <li><a href="{{ '/converter' | relative_url }}">Text to Markdown Converter</a></li>
+      {% endif %}
     </ul>
   </div>
 
   <div class="sidebar-section">
-    <h3>Community</h3>
+    <h3>💬 Community</h3>
     <ul>
-      <li><a href="{{ '/forum' | relative_url }}" id="forum-link"><strong>💬 Discussion Forum</strong><span id="forum-badge" class="notification-badge" style="display: none;">0</span></a></li>
+      <li><a href="{{ '/forum' | relative_url }}" id="forum-link">Forum<span id="forum-badge" class="notification-badge" style="display: none;">0</span></a></li>
+      <li><a href="{{ '/converter' | relative_url }}">Submit Document</a></li>
+      <li><a href="https://github.com/pawj-gne/facs-scientist-job-family-matrix">GitHub</a></li>
+    </ul>
+  </div>
+
+  <div class="sidebar-section" style="border-top: 1px solid #e1e4e8; padding-top: 1rem; margin-top: 0.5rem;">
+    <h3>ℹ️ Help</h3>
+    <ul>
       <li><a href="{{ '/FORUM-GUIDE' | relative_url }}">Forum Setup Guide</a></li>
-      <li><a href="https://github.com/pawj-gne/facs-scientist-job-family-matrix">View on GitHub</a></li>
     </ul>
   </div>
 </nav>
